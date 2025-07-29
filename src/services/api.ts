@@ -1,4 +1,5 @@
-const API_BASE_URL = 'https://z0oco0o80g4oggcs4k400wo0.coolify.vpa.com.au/api/canvas';
+const API_BASE_URL = 'http://localhost:3001/api/canvas';
+// const API_BASE_URL = 'https://z0oco0o80g4oggcs4k400wo0.coolify.vpa.com.au/api/canvas';
 
 export interface Category {
   id: string;

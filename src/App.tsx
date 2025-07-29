@@ -8,10 +8,12 @@ import { LoadTemplateModal } from './components/LoadTemplateModal';
 import { UpdateTemplateModal } from './components/UpdateTemplateModal';
 import { Dashboard } from './components/Dashboard';
 import { Header } from './components/Header';
+import { Login } from './components/Login';
 import { CanvasElement, CanvasConfig } from './types/canvas';
 import { Eye, Download, Settings, Save, Upload, RefreshCw, ArrowLeft, LayoutDashboard } from 'lucide-react';
 
 function App() {
+  const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [currentView, setCurrentView] = useState<'dashboard' | 'editor'>('dashboard');
   const [canvasConfig, setCanvasConfig] = useState<CanvasConfig>({
     width: 800,
@@ -174,18 +176,42 @@ function App() {
     console.log('Template updated successfully!');
   }, []);
 
+  const handleLogin = useCallback(() => {
+    setIsAuthenticated(true);
+  }, []);
+
+  const handleLogout = useCallback(() => {
+    setIsAuthenticated(false);
+    setCurrentView('dashboard');
+    // Clear any sensitive data
+    setElements([]);
+    setSelectedElement(null);
+    setCurrentTemplateId(null);
+    setCurrentTemplateName('');
+  }, []);
+
+  // If not authenticated, show login page
+  if (!isAuthenticated) {
+    return <Login onLogin={handleLogin} />;
+  }
+
   if (currentView === 'dashboard') {
     return (
-      <Dashboard 
-        onLoadTemplate={loadTemplate}
-        onCreateNew={createNewTemplate}
-      />
+      <div className="min-h-screen bg-gray-50 flex flex-col">
+        <Header onLogout={handleLogout} />
+        <div className="flex-1">
+          <Dashboard 
+            onLoadTemplate={loadTemplate}
+            onCreateNew={createNewTemplate}
+          />
+        </div>
+      </div>
     );
   }
 
   return (
     <div className="min-h-screen bg-gray-50 flex flex-col">
-      <Header />
+      <Header onLogout={handleLogout} />
       
       <div className="flex-1 flex">
         {/* Properties Panel */}
