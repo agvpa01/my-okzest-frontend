@@ -174,6 +174,10 @@ function App() {
 
   const goToDashboard = useCallback(() => {
     setCurrentView('dashboard');
+    // Remove template parameter from URL when going back to dashboard
+    const url = new URL(window.location.href);
+    url.searchParams.delete('template');
+    window.history.replaceState({}, '', url.toString());
   }, []);
 
   const handleTemplateUpdated = useCallback(() => {
