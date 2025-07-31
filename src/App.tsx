@@ -13,7 +13,11 @@ import { CanvasElement, CanvasConfig } from './types/canvas';
 import { Eye, Download, Settings, Save, Upload, RefreshCw, ArrowLeft, LayoutDashboard } from 'lucide-react';
 
 function App() {
-  const [isAuthenticated, setIsAuthenticated] = useState(false);
+  const [isAuthenticated, setIsAuthenticated] = useState(() => {
+    // Check localStorage for existing authentication state
+    const savedAuth = localStorage.getItem('isAuthenticated');
+    return savedAuth === 'true';
+  });
   const [currentView, setCurrentView] = useState<'dashboard' | 'editor'>('dashboard');
   const [canvasConfig, setCanvasConfig] = useState<CanvasConfig>({
     width: 800,
@@ -178,10 +182,12 @@ function App() {
 
   const handleLogin = useCallback(() => {
     setIsAuthenticated(true);
+    localStorage.setItem('isAuthenticated', 'true');
   }, []);
 
   const handleLogout = useCallback(() => {
     setIsAuthenticated(false);
+    localStorage.removeItem('isAuthenticated');
     setCurrentView('dashboard');
     // Clear any sensitive data
     setElements([]);

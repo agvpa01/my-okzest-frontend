@@ -60,6 +60,8 @@ export const PropertiesPanel: React.FC<PropertiesPanelProps> = ({
         letterSpacing: 'normal',
         width: 200,
         height: 50,
+        strokeColor: '#000000',
+        strokeWidth: 0,
       } as TextElement,
     });
   };
@@ -563,6 +565,67 @@ export const PropertiesPanel: React.FC<PropertiesPanelProps> = ({
                           <option value="center">Center</option>
                           <option value="right">Right</option>
                         </select>
+                      </div>
+
+                      <div className="grid grid-cols-2 gap-3">
+                        <div>
+                          <label className="block text-sm font-medium text-gray-700 mb-1">
+                            Stroke Color
+                          </label>
+                          <input
+                            type="color"
+                            value={selectedElement.data.strokeColor || '#000000'}
+                            onChange={(e) => updateSelectedElement({ 
+                              data: { ...selectedElement.data, strokeColor: e.target.value }
+                            })}
+                            className="w-full h-10 border border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500"
+                          />
+                        </div>
+                        <div>
+                          <label className="block text-sm font-medium text-gray-700 mb-1">
+                            Stroke Width
+                          </label>
+                          <input
+                            type="number"
+                            min="0"
+                            max="10"
+                            step="0.5"
+                            value={selectedElement.data.strokeWidth || 0}
+                            onChange={(e) => updateSelectedElement({ 
+                              data: { ...selectedElement.data, strokeWidth: parseFloat(e.target.value) || 0 }
+                            })}
+                            className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500"
+                          />
+                        </div>
+                      </div>
+
+                      <div className="grid grid-cols-2 gap-3">
+                        <div>
+                          <label className="block text-sm font-medium text-gray-700 mb-1">
+                            Width
+                          </label>
+                          <input
+                            type="number"
+                            value={selectedElement.data.width || 200}
+                            onChange={(e) => updateSelectedElement({ 
+                              data: { ...selectedElement.data, width: parseInt(e.target.value) || 200 }
+                            })}
+                            className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500"
+                          />
+                        </div>
+                        <div>
+                          <label className="block text-sm font-medium text-gray-700 mb-1">
+                            Height
+                          </label>
+                          <input
+                            type="number"
+                            value={selectedElement.data.height || 50}
+                            onChange={(e) => updateSelectedElement({ 
+                              data: { ...selectedElement.data, height: parseInt(e.target.value) || 50 }
+                            })}
+                            className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500"
+                          />
+                        </div>
                       </div>
                     </div>
                   )}

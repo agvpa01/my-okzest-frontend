@@ -20,6 +20,8 @@ export interface TextElement {
   letterSpacing?: string;
   width?: number;
   height?: number;
+  strokeColor?: string;
+  strokeWidth?: number;
 }
 
 export interface ImageElement {

@@ -51,10 +51,25 @@ export const renderCanvas = (
                     color: element.data.color,
                     textAlign: element.data.textAlign,
                     letterSpacing: element.data.letterSpacing || 'normal',
-                    whiteSpace: 'nowrap',
+                    width: element.data.width ? `${element.data.width}px` : 'auto',
+                    height: element.data.height ? `${element.data.height}px` : 'auto',
+                    whiteSpace: element.data.width ? 'normal' : 'nowrap',
+                    wordWrap: 'break-word',
+                    overflow: 'hidden',
+                    display: 'flex',
+                    alignItems: element.data.height ? 'center' : 'flex-start',
+                    justifyContent: element.data.textAlign === 'center' ? 'center' : element.data.textAlign === 'right' ? 'flex-end' : 'flex-start',
                   }}
                 >
-                  {variableValue || element.data.content || `{${element.variableName}}`}
+                  <div style={{ 
+                    textAlign: element.data.textAlign, 
+                    width: '100%',
+                    textShadow: element.data.strokeWidth && element.data.strokeWidth > 0
+                      ? `${element.data.strokeWidth}px 0 0 ${element.data.strokeColor}, -${element.data.strokeWidth}px 0 0 ${element.data.strokeColor}, 0 ${element.data.strokeWidth}px 0 ${element.data.strokeColor}, 0 -${element.data.strokeWidth}px 0 ${element.data.strokeColor}, ${element.data.strokeWidth}px ${element.data.strokeWidth}px 0 ${element.data.strokeColor}, -${element.data.strokeWidth}px -${element.data.strokeWidth}px 0 ${element.data.strokeColor}, ${element.data.strokeWidth}px -${element.data.strokeWidth}px 0 ${element.data.strokeColor}, -${element.data.strokeWidth}px ${element.data.strokeWidth}px 0 ${element.data.strokeColor}`
+                      : 'none'
+                  }}>
+                    {variableValue || element.data.content || `{${element.variableName}}`}
+                  </div>
                 </div>
               ) : (
                 <img

@@ -154,9 +154,18 @@ export const DraggableElement: React.FC<DraggableElementProps> = ({
             overflow: 'hidden',
             display: 'flex',
             alignItems: element.data.height ? 'center' : 'flex-start',
+            justifyContent: element.data.textAlign === 'center' ? 'center' : element.data.textAlign === 'right' ? 'flex-end' : 'flex-start',
           }}
         >
-          {variableValue || element.data.content || `{${element.variableName}}`}
+          <div style={{ 
+            textAlign: element.data.textAlign, 
+            width: '100%',
+            textShadow: element.data.strokeWidth && element.data.strokeColor && element.data.strokeWidth > 0
+              ? `${element.data.strokeWidth}px 0 0 ${element.data.strokeColor}, -${element.data.strokeWidth}px 0 0 ${element.data.strokeColor}, 0 ${element.data.strokeWidth}px 0 ${element.data.strokeColor}, 0 -${element.data.strokeWidth}px 0 ${element.data.strokeColor}, ${element.data.strokeWidth}px ${element.data.strokeWidth}px 0 ${element.data.strokeColor}, -${element.data.strokeWidth}px -${element.data.strokeWidth}px 0 ${element.data.strokeColor}, ${element.data.strokeWidth}px -${element.data.strokeWidth}px 0 ${element.data.strokeColor}, -${element.data.strokeWidth}px ${element.data.strokeWidth}px 0 ${element.data.strokeColor}`
+              : 'none'
+          }}>
+            {variableValue || element.data.content || `{${element.variableName}}`}
+          </div>
         </div>
       );
     } else {
