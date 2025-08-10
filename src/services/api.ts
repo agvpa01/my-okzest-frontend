@@ -1,9 +1,12 @@
-const API_BASE_URL = 'http://localhost:3002/api/canvas';
-// const API_BASE_URL = 'https://z0oco0o80g4oggcs4k400wo0.coolify.vpa.com.au/api/canvas';
-const SCHEDULER_BASE_URL = 'http://localhost:3002/api/scheduler';
-const UPLOAD_BASE_URL = 'http://localhost:3002/api';
-// const UPLOAD_BASE_URL = 'https://z0oco0o80g4oggcs4k400wo0.coolify.vpa.com.au/api';
-// const SCHEDULER_BASE_URL = 'https://z0oco0o80g4oggcs4k400wo0.coolify.vpa.com.au/api/scheduler';
+// const API_BASE_URL = 'http://localhost:3002/api/canvas';
+const API_BASE_URL =
+  "https://z0oco0o80g4oggcs4k400wo0.coolify.vpa.com.au/api/canvas";
+// const SCHEDULER_BASE_URL = 'http://localhost:3002/api/scheduler';
+// const UPLOAD_BASE_URL = 'http://localhost:3002/api';
+const UPLOAD_BASE_URL =
+  "https://z0oco0o80g4oggcs4k400wo0.coolify.vpa.com.au/api";
+const SCHEDULER_BASE_URL =
+  "https://z0oco0o80g4oggcs4k400wo0.coolify.vpa.com.au/api/scheduler";
 
 export interface Category {
   id: string;
@@ -94,30 +97,30 @@ export interface AvailableMonth {
 class ApiService {
   // Helper function to replace BASE_URL with actual backend URL
   private replaceBaseUrl(obj: any): any {
-    if (typeof obj === 'string') {
-      return obj.replace(/BASE_URL/g, API_BASE_URL.replace('/api/canvas', ''));
+    if (typeof obj === "string") {
+      return obj.replace(/BASE_URL/g, API_BASE_URL.replace("/api/canvas", ""));
     }
-    
+
     if (Array.isArray(obj)) {
-      return obj.map(item => this.replaceBaseUrl(item));
+      return obj.map((item) => this.replaceBaseUrl(item));
     }
-    
-    if (obj && typeof obj === 'object') {
+
+    if (obj && typeof obj === "object") {
       const result: any = {};
       for (const [key, value] of Object.entries(obj)) {
         result[key] = this.replaceBaseUrl(value);
       }
       return result;
     }
-    
+
     return obj;
   }
 
   async saveTemplate(data: SaveTemplateRequest): Promise<CanvasTemplate> {
     const response = await fetch(`${API_BASE_URL}/templates`, {
-      method: 'POST',
+      method: "POST",
       headers: {
-        'Content-Type': 'application/json',
+        "Content-Type": "application/json",
       },
       body: JSON.stringify(data),
     });
@@ -131,7 +134,7 @@ class ApiService {
 
   async getTemplates(): Promise<CanvasTemplate[]> {
     const response = await fetch(`${API_BASE_URL}/templates`);
-    
+
     if (!response.ok) {
       throw new Error(`Failed to fetch templates: ${response.statusText}`);
     }
@@ -145,7 +148,7 @@ class ApiService {
 
   async getTemplate(id: string): Promise<CanvasTemplate> {
     const response = await fetch(`${API_BASE_URL}/templates/${id}`);
-    
+
     if (!response.ok) {
       throw new Error(`Failed to fetch template: ${response.statusText}`);
     }
@@ -156,11 +159,14 @@ class ApiService {
     return this.replaceBaseUrl(data);
   }
 
-  async updateTemplate(id: string, data: SaveTemplateRequest): Promise<CanvasTemplate> {
+  async updateTemplate(
+    id: string,
+    data: SaveTemplateRequest
+  ): Promise<CanvasTemplate> {
     const response = await fetch(`${API_BASE_URL}/templates/${id}`, {
-      method: 'PUT',
+      method: "PUT",
       headers: {
-        'Content-Type': 'application/json',
+        "Content-Type": "application/json",
       },
       body: JSON.stringify(data),
     });
@@ -174,7 +180,7 @@ class ApiService {
 
   async deleteTemplate(id: string): Promise<void> {
     const response = await fetch(`${API_BASE_URL}/templates/${id}`, {
-      method: 'DELETE',
+      method: "DELETE",
     });
 
     if (!response.ok) {
@@ -184,15 +190,20 @@ class ApiService {
 
   async getTemplateVariables(id: string): Promise<TemplateVariable[]> {
     const response = await fetch(`${API_BASE_URL}/templates/${id}/variables`);
-    
+
     if (!response.ok) {
-      throw new Error(`Failed to fetch template variables: ${response.statusText}`);
+      throw new Error(
+        `Failed to fetch template variables: ${response.statusText}`
+      );
     }
 
     return response.json();
   }
 
-  getRenderUrl(templateId: string, params: Record<string, string> = {}): string {
+  getRenderUrl(
+    templateId: string,
+    params: Record<string, string> = {}
+  ): string {
     const searchParams = new URLSearchParams(params);
     return `${API_BASE_URL}/render/${templateId}?${searchParams.toString()}`;
   }
@@ -200,7 +211,7 @@ class ApiService {
   // Category management methods
   async getCategories(): Promise<Category[]> {
     const response = await fetch(`${API_BASE_URL}/categories`);
-    
+
     if (!response.ok) {
       throw new Error(`Failed to fetch categories: ${response.statusText}`);
     }
@@ -211,9 +222,9 @@ class ApiService {
 
   async createCategory(data: CreateCategoryRequest): Promise<Category> {
     const response = await fetch(`${API_BASE_URL}/categories`, {
-      method: 'POST',
+      method: "POST",
       headers: {
-        'Content-Type': 'application/json',
+        "Content-Type": "application/json",
       },
       body: JSON.stringify(data),
     });
@@ -226,11 +237,14 @@ class ApiService {
     return result.category;
   }
 
-  async updateCategory(id: string, data: CreateCategoryRequest): Promise<Category> {
+  async updateCategory(
+    id: string,
+    data: CreateCategoryRequest
+  ): Promise<Category> {
     const response = await fetch(`${API_BASE_URL}/categories/${id}`, {
-      method: 'PUT',
+      method: "PUT",
       headers: {
-        'Content-Type': 'application/json',
+        "Content-Type": "application/json",
       },
       body: JSON.stringify(data),
     });
@@ -245,7 +259,7 @@ class ApiService {
 
   async deleteCategory(id: string): Promise<void> {
     const response = await fetch(`${API_BASE_URL}/categories/${id}`, {
-      method: 'DELETE',
+      method: "DELETE",
     });
 
     if (!response.ok) {
@@ -256,10 +270,10 @@ class ApiService {
   // Image upload method
   async uploadImage(file: File): Promise<{ url: string; filename: string }> {
     const formData = new FormData();
-    formData.append('image', file);
+    formData.append("image", file);
 
     const response = await fetch(`${UPLOAD_BASE_URL}/upload-image`, {
-      method: 'POST',
+      method: "POST",
       body: formData,
     });
 
@@ -270,17 +284,28 @@ class ApiService {
     return response.json();
   }
 
-  async migrateImages(): Promise<{ success: boolean; templatesUpdated: number; imagesProcessed: number; message: string }> {
+  async migrateImages(): Promise<{
+    success: boolean;
+    templatesUpdated: number;
+    imagesProcessed: number;
+    message: string;
+  }> {
     const response = await fetch(`${API_BASE_URL}/migrate-images`, {
-      method: 'POST',
+      method: "POST",
       headers: {
-        'Content-Type': 'application/json',
+        "Content-Type": "application/json",
       },
     });
 
     if (!response.ok) {
-      const errorData = await response.json().catch(() => ({ error: 'Unknown error' }));
-      throw new Error(errorData.details || errorData.error || `Migration failed: ${response.statusText}`);
+      const errorData = await response
+        .json()
+        .catch(() => ({ error: "Unknown error" }));
+      throw new Error(
+        errorData.details ||
+          errorData.error ||
+          `Migration failed: ${response.statusText}`
+      );
     }
 
     return response.json();
@@ -289,61 +314,76 @@ class ApiService {
   // Scheduling methods
   async getTemplateGroups(): Promise<TemplateGroup[]> {
     const response = await fetch(`${SCHEDULER_BASE_URL}/groups`);
-    
+
     if (!response.ok) {
-      throw new Error(`Failed to fetch template groups: ${response.statusText}`);
+      throw new Error(
+        `Failed to fetch template groups: ${response.statusText}`
+      );
     }
 
     const data = await response.json();
     return data.groups || [];
   }
 
-  async createTemplateGroup(data: CreateTemplateGroupRequest): Promise<TemplateGroup> {
+  async createTemplateGroup(
+    data: CreateTemplateGroupRequest
+  ): Promise<TemplateGroup> {
     const response = await fetch(`${SCHEDULER_BASE_URL}/groups`, {
-      method: 'POST',
+      method: "POST",
       headers: {
-        'Content-Type': 'application/json',
+        "Content-Type": "application/json",
       },
       body: JSON.stringify(data),
     });
 
     if (!response.ok) {
-      throw new Error(`Failed to create template group: ${response.statusText}`);
+      throw new Error(
+        `Failed to create template group: ${response.statusText}`
+      );
     }
 
     const result = await response.json();
     return result.group;
   }
 
-  async updateTemplateGroup(id: string, data: CreateTemplateGroupRequest): Promise<void> {
+  async updateTemplateGroup(
+    id: string,
+    data: CreateTemplateGroupRequest
+  ): Promise<void> {
     const response = await fetch(`${SCHEDULER_BASE_URL}/groups/${id}`, {
-      method: 'PUT',
+      method: "PUT",
       headers: {
-        'Content-Type': 'application/json',
+        "Content-Type": "application/json",
       },
       body: JSON.stringify(data),
     });
 
     if (!response.ok) {
-      throw new Error(`Failed to update template group: ${response.statusText}`);
+      throw new Error(
+        `Failed to update template group: ${response.statusText}`
+      );
     }
   }
 
   async deleteTemplateGroup(id: string): Promise<void> {
     const response = await fetch(`${SCHEDULER_BASE_URL}/groups/${id}`, {
-      method: 'DELETE',
+      method: "DELETE",
     });
 
     if (!response.ok) {
-      throw new Error(`Failed to delete template group: ${response.statusText}`);
+      throw new Error(
+        `Failed to delete template group: ${response.statusText}`
+      );
     }
   }
 
   async getActiveTemplateGroup(): Promise<TemplateGroup | null> {
     const response = await fetch(`${SCHEDULER_BASE_URL}/active-group`);
-    
+
     if (!response.ok) {
-      throw new Error(`Failed to fetch active template group: ${response.statusText}`);
+      throw new Error(
+        `Failed to fetch active template group: ${response.statusText}`
+      );
     }
 
     const data = await response.json();
@@ -351,18 +391,23 @@ class ApiService {
   }
 
   async activateTemplateGroup(id: string): Promise<void> {
-    const response = await fetch(`${SCHEDULER_BASE_URL}/groups/${id}/activate`, {
-      method: 'POST',
-    });
+    const response = await fetch(
+      `${SCHEDULER_BASE_URL}/groups/${id}/activate`,
+      {
+        method: "POST",
+      }
+    );
 
     if (!response.ok) {
-      throw new Error(`Failed to activate template group: ${response.statusText}`);
+      throw new Error(
+        `Failed to activate template group: ${response.statusText}`
+      );
     }
   }
 
   async getSchedules(year: number): Promise<TemplateSchedule[]> {
     const response = await fetch(`${SCHEDULER_BASE_URL}/schedules/${year}`);
-    
+
     if (!response.ok) {
       throw new Error(`Failed to fetch schedules: ${response.statusText}`);
     }
@@ -373,16 +418,20 @@ class ApiService {
 
   async createSchedule(data: CreateScheduleRequest): Promise<TemplateSchedule> {
     const response = await fetch(`${SCHEDULER_BASE_URL}/schedules`, {
-      method: 'POST',
+      method: "POST",
       headers: {
-        'Content-Type': 'application/json',
+        "Content-Type": "application/json",
       },
       body: JSON.stringify(data),
     });
 
     if (!response.ok) {
-      const errorData = await response.json().catch(() => ({ error: 'Unknown error' }));
-      throw new Error(errorData.error || `Failed to create schedule: ${response.statusText}`);
+      const errorData = await response
+        .json()
+        .catch(() => ({ error: "Unknown error" }));
+      throw new Error(
+        errorData.error || `Failed to create schedule: ${response.statusText}`
+      );
     }
 
     const result = await response.json();
@@ -391,7 +440,7 @@ class ApiService {
 
   async deleteSchedule(id: string): Promise<void> {
     const response = await fetch(`${SCHEDULER_BASE_URL}/schedules/${id}`, {
-      method: 'DELETE',
+      method: "DELETE",
     });
 
     if (!response.ok) {
@@ -399,11 +448,16 @@ class ApiService {
     }
   }
 
-  async getAvailableMonths(): Promise<{ months: AvailableMonth[]; currentYear: number }> {
+  async getAvailableMonths(): Promise<{
+    months: AvailableMonth[];
+    currentYear: number;
+  }> {
     const response = await fetch(`${SCHEDULER_BASE_URL}/available-months`);
-    
+
     if (!response.ok) {
-      throw new Error(`Failed to fetch available months: ${response.statusText}`);
+      throw new Error(
+        `Failed to fetch available months: ${response.statusText}`
+      );
     }
 
     return response.json();
