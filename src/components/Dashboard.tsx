@@ -1,7 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { CanvasTemplate, Category, apiService } from '../services/api';
-import { Eye, Edit, Trash2, Calendar, Image, Plus, Tag, FolderPlus, X, RefreshCw } from 'lucide-react';
+import { Eye, Edit, Trash2, Calendar, Image, Plus, Tag, FolderPlus, X, RefreshCw, Clock } from 'lucide-react';
 import { CanvasConfig, CanvasElement } from '../types/canvas';
+import { ScheduleModal } from './ScheduleModal';
 
 interface DashboardProps {
   onLoadTemplate: (config: CanvasConfig, elements: CanvasElement[], templateId?: string, templateName?: string) => void;
@@ -21,6 +22,7 @@ export const Dashboard: React.FC<DashboardProps> = ({ onLoadTemplate, onCreateNe
   const [deleteCategoryConfirm, setDeleteCategoryConfirm] = useState<string | null>(null);
   const [isMigrating, setIsMigrating] = useState(false);
   const [migrationResult, setMigrationResult] = useState<string | null>(null);
+  const [showScheduleModal, setShowScheduleModal] = useState(false);
 
   useEffect(() => {
     loadData();
@@ -275,6 +277,13 @@ export const Dashboard: React.FC<DashboardProps> = ({ onLoadTemplate, onCreateNe
               </div>
               <div className="flex items-center space-x-3">
                 <button
+                  onClick={() => setShowScheduleModal(true)}
+                  className="flex items-center space-x-2 px-4 py-2 bg-purple-600 text-white rounded-lg hover:bg-purple-700 transition-colors"
+                >
+                  <Clock className="w-4 h-4" />
+                  <span>Schedule Templates</span>
+                </button>
+                <button
                   onClick={handleMigrateImages}
                   disabled={isMigrating}
                   className="flex items-center space-x-2 px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
@@ -506,6 +515,13 @@ export const Dashboard: React.FC<DashboardProps> = ({ onLoadTemplate, onCreateNe
           </div>
         </div>
       )}
+
+      {/* Schedule Modal */}
+      <ScheduleModal
+        isOpen={showScheduleModal}
+        onClose={() => setShowScheduleModal(false)}
+        templates={templates}
+      />
     </div>
   );
 };

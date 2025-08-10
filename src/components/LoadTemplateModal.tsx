@@ -5,7 +5,7 @@ import { apiService, CanvasTemplate } from '../services/api';
 
 interface LoadTemplateModalProps {
   onClose: () => void;
-  onLoad: (config: CanvasConfig, elements: CanvasElement[], templateId?: string, templateName?: string) => void;
+  onLoad: (config: CanvasConfig, elements: CanvasElement[], templateId?: string, templateName?: string, categoryId?: string) => void;
 }
 
 export function LoadTemplateModal({ onClose, onLoad }: LoadTemplateModalProps) {
@@ -36,7 +36,7 @@ export function LoadTemplateModal({ onClose, onLoad }: LoadTemplateModalProps) {
   const handleLoadTemplate = async (template: CanvasTemplate) => {
     try {
       const fullTemplate = await apiService.getTemplate(template.id);
-      onLoad(fullTemplate.config, fullTemplate.elements, fullTemplate.id, fullTemplate.name);
+      onLoad(fullTemplate.config, fullTemplate.elements, fullTemplate.id, fullTemplate.name, fullTemplate.category_id);
       onClose();
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Failed to load template');

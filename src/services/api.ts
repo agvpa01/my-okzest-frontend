@@ -1,7 +1,9 @@
-// const API_BASE_URL = 'http://localhost:3002/api/canvas';
-const API_BASE_URL = 'https://z0oco0o80g4oggcs4k400wo0.coolify.vpa.com.au/api/canvas';
-const UPLOAD_BASE_URL = 'https://z0oco0o80g4oggcs4k400wo0.coolify.vpa.com.au/api';
-// const UPLOAD_BASE_URL = 'http://localhost:3002/api';
+const API_BASE_URL = 'http://localhost:3002/api/canvas';
+// const API_BASE_URL = 'https://z0oco0o80g4oggcs4k400wo0.coolify.vpa.com.au/api/canvas';
+const SCHEDULER_BASE_URL = 'http://localhost:3002/api/scheduler';
+const UPLOAD_BASE_URL = 'http://localhost:3002/api';
+// const UPLOAD_BASE_URL = 'https://z0oco0o80g4oggcs4k400wo0.coolify.vpa.com.au/api';
+// const SCHEDULER_BASE_URL = 'https://z0oco0o80g4oggcs4k400wo0.coolify.vpa.com.au/api/scheduler';
 
 export interface Category {
   id: string;
@@ -41,6 +43,52 @@ export interface SaveTemplateRequest {
 export interface CreateCategoryRequest {
   name: string;
   color?: string;
+}
+
+export interface TemplateGroup {
+  id: string;
+  name: string;
+  description: string;
+  is_active: boolean;
+  template_count: number;
+  template_ids: string[];
+  created_at: string;
+  updated_at: string;
+}
+
+export interface CreateTemplateGroupRequest {
+  name: string;
+  description?: string;
+  templateIds?: string[];
+}
+
+export interface TemplateSchedule {
+  id: string;
+  group_id: string;
+  group_name: string;
+  year: number;
+  month: number;
+  day: number;
+  hour: number;
+  minute: number;
+  is_executed: boolean;
+  executed_at?: string;
+  created_at: string;
+}
+
+export interface CreateScheduleRequest {
+  groupId: string;
+  year: number;
+  month: number;
+  day: number;
+  hour: number;
+  minute: number;
+}
+
+export interface AvailableMonth {
+  value: number;
+  label: string;
+  year: number;
 }
 
 class ApiService {
@@ -233,6 +281,129 @@ class ApiService {
     if (!response.ok) {
       const errorData = await response.json().catch(() => ({ error: 'Unknown error' }));
       throw new Error(errorData.details || errorData.error || `Migration failed: ${response.statusText}`);
+    }
+
+    return response.json();
+  }
+
+  // Scheduling methods
+  async getTemplateGroups(): Promise<TemplateGroup[]> {
+    const response = await fetch(`${SCHEDULER_BASE_URL}/groups`);
+    
+    if (!response.ok) {
+      throw new Error(`Failed to fetch template groups: ${response.statusText}`);
+    }
+
+    const data = await response.json();
+    return data.groups || [];
+  }
+
+  async createTemplateGroup(data: CreateTemplateGroupRequest): Promise<TemplateGroup> {
+    const response = await fetch(`${SCHEDULER_BASE_URL}/groups`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(data),
+    });
+
+    if (!response.ok) {
+      throw new Error(`Failed to create template group: ${response.statusText}`);
+    }
+
+    const result = await response.json();
+    return result.group;
+  }
+
+  async updateTemplateGroup(id: string, data: CreateTemplateGroupRequest): Promise<void> {
+    const response = await fetch(`${SCHEDULER_BASE_URL}/groups/${id}`, {
+      method: 'PUT',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(data),
+    });
+
+    if (!response.ok) {
+      throw new Error(`Failed to update template group: ${response.statusText}`);
+    }
+  }
+
+  async deleteTemplateGroup(id: string): Promise<void> {
+    const response = await fetch(`${SCHEDULER_BASE_URL}/groups/${id}`, {
+      method: 'DELETE',
+    });
+
+    if (!response.ok) {
+      throw new Error(`Failed to delete template group: ${response.statusText}`);
+    }
+  }
+
+  async getActiveTemplateGroup(): Promise<TemplateGroup | null> {
+    const response = await fetch(`${SCHEDULER_BASE_URL}/active-group`);
+    
+    if (!response.ok) {
+      throw new Error(`Failed to fetch active template group: ${response.statusText}`);
+    }
+
+    const data = await response.json();
+    return data.activeGroup;
+  }
+
+  async activateTemplateGroup(id: string): Promise<void> {
+    const response = await fetch(`${SCHEDULER_BASE_URL}/groups/${id}/activate`, {
+      method: 'POST',
+    });
+
+    if (!response.ok) {
+      throw new Error(`Failed to activate template group: ${response.statusText}`);
+    }
+  }
+
+  async getSchedules(year: number): Promise<TemplateSchedule[]> {
+    const response = await fetch(`${SCHEDULER_BASE_URL}/schedules/${year}`);
+    
+    if (!response.ok) {
+      throw new Error(`Failed to fetch schedules: ${response.statusText}`);
+    }
+
+    const data = await response.json();
+    return data.schedules || [];
+  }
+
+  async createSchedule(data: CreateScheduleRequest): Promise<TemplateSchedule> {
+    const response = await fetch(`${SCHEDULER_BASE_URL}/schedules`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(data),
+    });
+
+    if (!response.ok) {
+      const errorData = await response.json().catch(() => ({ error: 'Unknown error' }));
+      throw new Error(errorData.error || `Failed to create schedule: ${response.statusText}`);
+    }
+
+    const result = await response.json();
+    return result.schedule;
+  }
+
+  async deleteSchedule(id: string): Promise<void> {
+    const response = await fetch(`${SCHEDULER_BASE_URL}/schedules/${id}`, {
+      method: 'DELETE',
+    });
+
+    if (!response.ok) {
+      throw new Error(`Failed to delete schedule: ${response.statusText}`);
+    }
+  }
+
+  async getAvailableMonths(): Promise<{ months: AvailableMonth[]; currentYear: number }> {
+    const response = await fetch(`${SCHEDULER_BASE_URL}/available-months`);
+    
+    if (!response.ok) {
+      throw new Error(`Failed to fetch available months: ${response.statusText}`);
     }
 
     return response.json();

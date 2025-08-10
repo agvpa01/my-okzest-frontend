@@ -47,6 +47,7 @@ function App() {
   const [showLoadTemplate, setShowLoadTemplate] = useState(false);
   const [showUpdateTemplate, setShowUpdateTemplate] = useState(false);
   const [currentTemplateName, setCurrentTemplateName] = useState<string>("");
+  const [currentTemplateCategoryId, setCurrentTemplateCategoryId] = useState<string | null>(null);
   const [showSettings, setShowSettings] = useState(true);
   const [currentTemplateId, setCurrentTemplateId] = useState<string | null>(
     null
@@ -188,13 +189,15 @@ function App() {
       config: CanvasConfig,
       elements: CanvasElement[],
       templateId?: string,
-      templateName?: string
+      templateName?: string,
+      categoryId?: string | null
     ) => {
       setCanvasConfig(config);
       setElements(elements);
       setSelectedElement(null);
       setCurrentTemplateId(templateId || null);
       setCurrentTemplateName(templateName || "");
+      setCurrentTemplateCategoryId(categoryId || null);
       setCurrentView("editor");
 
       // Update URL with template ID if provided
@@ -217,6 +220,7 @@ function App() {
     setSelectedElement(null);
     setCurrentTemplateId(null);
     setCurrentTemplateName("");
+    setCurrentTemplateCategoryId(null);
     setCurrentView("editor");
   }, []);
 
@@ -246,6 +250,7 @@ function App() {
     setSelectedElement(null);
     setCurrentTemplateId(null);
     setCurrentTemplateName("");
+    setCurrentTemplateCategoryId(null);
   }, []);
 
   // If not authenticated, show login page
@@ -428,6 +433,7 @@ function App() {
         <UpdateTemplateModal
           templateId={currentTemplateId}
           currentName={currentTemplateName}
+          currentCategoryId={currentTemplateCategoryId}
           config={canvasConfig}
           elements={elements}
           onClose={() => setShowUpdateTemplate(false)}
