@@ -1,5 +1,7 @@
-// const API_BASE_URL = 'http://localhost:3001/api/canvas';
+// const API_BASE_URL = 'http://localhost:3002/api/canvas';
 const API_BASE_URL = 'https://z0oco0o80g4oggcs4k400wo0.coolify.vpa.com.au/api/canvas';
+const UPLOAD_BASE_URL = 'https://z0oco0o80g4oggcs4k400wo0.coolify.vpa.com.au/api';
+// const UPLOAD_BASE_URL = 'http://localhost:3002/api';
 
 export interface Category {
   id: string;
@@ -42,6 +44,27 @@ export interface CreateCategoryRequest {
 }
 
 class ApiService {
+  // Helper function to replace BASE_URL with actual backend URL
+  private replaceBaseUrl(obj: any): any {
+    if (typeof obj === 'string') {
+      return obj.replace(/BASE_URL/g, API_BASE_URL.replace('/api/canvas', ''));
+    }
+    
+    if (Array.isArray(obj)) {
+      return obj.map(item => this.replaceBaseUrl(item));
+    }
+    
+    if (obj && typeof obj === 'object') {
+      const result: any = {};
+      for (const [key, value] of Object.entries(obj)) {
+        result[key] = this.replaceBaseUrl(value);
+      }
+      return result;
+    }
+    
+    return obj;
+  }
+
   async saveTemplate(data: SaveTemplateRequest): Promise<CanvasTemplate> {
     const response = await fetch(`${API_BASE_URL}/templates`, {
       method: 'POST',
@@ -67,7 +90,9 @@ class ApiService {
 
     const data = await response.json();
     // Backend returns {templates: [...]} but we need just the array
-    return data.templates || [];
+    const templates = data.templates || [];
+    // Replace BASE_URL with actual backend URL in all template data
+    return this.replaceBaseUrl(templates);
   }
 
   async getTemplate(id: string): Promise<CanvasTemplate> {
@@ -79,7 +104,8 @@ class ApiService {
 
     const data = await response.json();
     // Backend now returns the template data directly, not wrapped in {template: ...}
-    return data;
+    // Replace BASE_URL with actual backend URL in template data
+    return this.replaceBaseUrl(data);
   }
 
   async updateTemplate(id: string, data: SaveTemplateRequest): Promise<CanvasTemplate> {
@@ -177,6 +203,39 @@ class ApiService {
     if (!response.ok) {
       throw new Error(`Failed to delete category: ${response.statusText}`);
     }
+  }
+
+  // Image upload method
+  async uploadImage(file: File): Promise<{ url: string; filename: string }> {
+    const formData = new FormData();
+    formData.append('image', file);
+
+    const response = await fetch(`${UPLOAD_BASE_URL}/upload-image`, {
+      method: 'POST',
+      body: formData,
+    });
+
+    if (!response.ok) {
+      throw new Error(`Failed to upload image: ${response.statusText}`);
+    }
+
+    return response.json();
+  }
+
+  async migrateImages(): Promise<{ success: boolean; templatesUpdated: number; imagesProcessed: number; message: string }> {
+    const response = await fetch(`${API_BASE_URL}/migrate-images`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+    });
+
+    if (!response.ok) {
+      const errorData = await response.json().catch(() => ({ error: 'Unknown error' }));
+      throw new Error(errorData.details || errorData.error || `Migration failed: ${response.statusText}`);
+    }
+
+    return response.json();
   }
 }
 

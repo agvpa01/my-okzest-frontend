@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { CanvasTemplate, Category, apiService } from '../services/api';
-import { Eye, Edit, Trash2, Calendar, Image, Plus, Tag, FolderPlus, X } from 'lucide-react';
+import { Eye, Edit, Trash2, Calendar, Image, Plus, Tag, FolderPlus, X, RefreshCw } from 'lucide-react';
 import { CanvasConfig, CanvasElement } from '../types/canvas';
 
 interface DashboardProps {
@@ -19,6 +19,8 @@ export const Dashboard: React.FC<DashboardProps> = ({ onLoadTemplate, onCreateNe
   const [error, setError] = useState<string | null>(null);
   const [deleteConfirm, setDeleteConfirm] = useState<string | null>(null);
   const [deleteCategoryConfirm, setDeleteCategoryConfirm] = useState<string | null>(null);
+  const [isMigrating, setIsMigrating] = useState(false);
+  const [migrationResult, setMigrationResult] = useState<string | null>(null);
 
   useEffect(() => {
     loadData();
@@ -77,6 +79,28 @@ export const Dashboard: React.FC<DashboardProps> = ({ onLoadTemplate, onCreateNe
     } catch (err) {
       setError('Failed to delete category. Please try again.');
       console.error('Error deleting category:', err);
+    }
+  };
+
+  const handleMigrateImages = async () => {
+    try {
+      setIsMigrating(true);
+      setMigrationResult(null);
+      setError(null);
+      
+      const result = await apiService.migrateImages();
+      
+      if (result.success) {
+        setMigrationResult(`Migration completed successfully! Updated ${result.templatesUpdated} templates and processed ${result.imagesProcessed} images.`);
+        // Reload templates to show updated data
+        await loadData();
+      } else {
+        setError('Migration failed. Please check the server logs.');
+      }
+    } catch (err) {
+      setError(err instanceof Error ? err.message : 'Migration failed');
+    } finally {
+      setIsMigrating(false);
     }
   };
 
@@ -249,13 +273,27 @@ export const Dashboard: React.FC<DashboardProps> = ({ onLoadTemplate, onCreateNe
                   {filteredTemplates.length} template{filteredTemplates.length !== 1 ? 's' : ''}
                 </p>
               </div>
-              <button
-                onClick={onCreateNew}
-                className="flex items-center space-x-2 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
-              >
-                <Plus className="w-4 h-4" />
-                <span>Create New Template</span>
-              </button>
+              <div className="flex items-center space-x-3">
+                <button
+                  onClick={handleMigrateImages}
+                  disabled={isMigrating}
+                  className="flex items-center space-x-2 px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+                >
+                  {isMigrating ? (
+                    <RefreshCw className="w-4 h-4 animate-spin" />
+                  ) : (
+                    <RefreshCw className="w-4 h-4" />
+                  )}
+                  <span>{isMigrating ? 'Migrating...' : 'Migrate Images'}</span>
+                </button>
+                <button
+                  onClick={onCreateNew}
+                  className="flex items-center space-x-2 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
+                >
+                  <Plus className="w-4 h-4" />
+                  <span>Create New Template</span>
+                </button>
+              </div>
             </div>
           </div>
         </div>
@@ -268,6 +306,18 @@ export const Dashboard: React.FC<DashboardProps> = ({ onLoadTemplate, onCreateNe
             <button
               onClick={() => setError(null)}
               className="mt-2 text-sm text-red-600 hover:text-red-800 underline"
+            >
+              Dismiss
+            </button>
+          </div>
+        )}
+
+        {migrationResult && (
+          <div className="mb-6 p-4 bg-green-50 border border-green-200 rounded-lg">
+            <p className="text-green-800">{migrationResult}</p>
+            <button
+              onClick={() => setMigrationResult(null)}
+              className="mt-2 text-sm text-green-600 hover:text-green-800 underline"
             >
               Dismiss
             </button>

@@ -1,69 +1,87 @@
-import React, { useState, useCallback, useEffect } from 'react';
-import { CanvasEditor } from './components/CanvasEditor';
-import { PropertiesPanel } from './components/PropertiesPanel';
-import { PreviewModal } from './components/PreviewModal';
-import { ExportModal } from './components/ExportModal';
-import { SaveTemplateModal } from './components/SaveTemplateModal';
-import { LoadTemplateModal } from './components/LoadTemplateModal';
-import { UpdateTemplateModal } from './components/UpdateTemplateModal';
-import { Dashboard } from './components/Dashboard';
-import { Header } from './components/Header';
-import { Login } from './components/Login';
-import { CanvasElement, CanvasConfig } from './types/canvas';
-import { Eye, Download, Settings, Save, Upload, RefreshCw, ArrowLeft, LayoutDashboard } from 'lucide-react';
+import React, { useState, useCallback, useEffect } from "react";
+import { CanvasEditor } from "./components/CanvasEditor";
+import { PropertiesPanel } from "./components/PropertiesPanel";
+import { PreviewModal } from "./components/PreviewModal";
+import { ExportModal } from "./components/ExportModal";
+import { SaveTemplateModal } from "./components/SaveTemplateModal";
+import { LoadTemplateModal } from "./components/LoadTemplateModal";
+import { UpdateTemplateModal } from "./components/UpdateTemplateModal";
+import { Dashboard } from "./components/Dashboard";
+import { Header } from "./components/Header";
+import { Login } from "./components/Login";
+import { CanvasElement, CanvasConfig } from "./types/canvas";
+import {
+  Eye,
+  Download,
+  Settings,
+  Save,
+  Upload,
+  RefreshCw,
+  ArrowLeft,
+  LayoutDashboard,
+} from "lucide-react";
 
 function App() {
   const [isAuthenticated, setIsAuthenticated] = useState(() => {
     // Check localStorage for existing authentication state
-    const savedAuth = localStorage.getItem('isAuthenticated');
-    return savedAuth === 'true';
+    const savedAuth = localStorage.getItem("isAuthenticated");
+    return savedAuth === "true";
   });
-  const [currentView, setCurrentView] = useState<'dashboard' | 'editor'>('dashboard');
+  const [currentView, setCurrentView] = useState<"dashboard" | "editor">(
+    "dashboard"
+  );
   const [canvasConfig, setCanvasConfig] = useState<CanvasConfig>({
     width: 800,
     height: 600,
-    backgroundImage: '',
+    backgroundImage: "",
   });
 
   const [elements, setElements] = useState<CanvasElement[]>([]);
-  const [selectedElement, setSelectedElement] = useState<CanvasElement | null>(null);
+  const [selectedElement, setSelectedElement] = useState<CanvasElement | null>(
+    null
+  );
   const [isBackgroundSelected, setIsBackgroundSelected] = useState(false);
   const [showPreview, setShowPreview] = useState(false);
   const [showExport, setShowExport] = useState(false);
   const [showSaveTemplate, setShowSaveTemplate] = useState(false);
   const [showLoadTemplate, setShowLoadTemplate] = useState(false);
   const [showUpdateTemplate, setShowUpdateTemplate] = useState(false);
-  const [currentTemplateName, setCurrentTemplateName] = useState<string>('');
+  const [currentTemplateName, setCurrentTemplateName] = useState<string>("");
   const [showSettings, setShowSettings] = useState(true);
-  const [currentTemplateId, setCurrentTemplateId] = useState<string | null>(null);
+  const [currentTemplateId, setCurrentTemplateId] = useState<string | null>(
+    null
+  );
   const [urlParams, setUrlParams] = useState<Record<string, string>>({});
 
   // Function to constrain elements within canvas boundaries
-  const constrainElementsToCanvas = useCallback((newCanvasConfig: CanvasConfig, currentElements: CanvasElement[]) => {
-    return currentElements.map(element => {
-      const elementWidth = element.data.width || 100;
-      const elementHeight = element.data.height || 50;
-      
-      // Calculate maximum allowed positions
-      const maxX = Math.max(0, newCanvasConfig.width - elementWidth);
-      const maxY = Math.max(0, newCanvasConfig.height - elementHeight);
-      
-      // Constrain element position within canvas bounds
-      const constrainedX = Math.min(Math.max(0, element.x), maxX);
-      const constrainedY = Math.min(Math.max(0, element.y), maxY);
-      
-      // Only update if position changed
-      if (constrainedX !== element.x || constrainedY !== element.y) {
-        return {
-          ...element,
-          x: constrainedX,
-          y: constrainedY
-        };
-      }
-      
-      return element;
-    });
-  }, []);
+  const constrainElementsToCanvas = useCallback(
+    (newCanvasConfig: CanvasConfig, currentElements: CanvasElement[]) => {
+      return currentElements.map((element) => {
+        const elementWidth = element.data.width || 100;
+        const elementHeight = element.data.height || 50;
+
+        // Calculate maximum allowed positions
+        const maxX = Math.max(0, newCanvasConfig.width - elementWidth);
+        const maxY = Math.max(0, newCanvasConfig.height - elementHeight);
+
+        // Constrain element position within canvas bounds
+        const constrainedX = Math.min(Math.max(0, element.x), maxX);
+        const constrainedY = Math.min(Math.max(0, element.y), maxY);
+
+        // Only update if position changed
+        if (constrainedX !== element.x || constrainedY !== element.y) {
+          return {
+            ...element,
+            x: constrainedX,
+            y: constrainedY,
+          };
+        }
+
+        return element;
+      });
+    },
+    []
+  );
 
   // Parse URL parameters on component mount and when URL changes
   useEffect(() => {
@@ -77,38 +95,46 @@ function App() {
     };
 
     parseUrlParams();
-    
+
     // Listen for URL changes (e.g., when user manually changes URL)
     const handlePopState = () => {
       parseUrlParams();
     };
-    
-    window.addEventListener('popstate', handlePopState);
-    return () => window.removeEventListener('popstate', handlePopState);
+
+    window.addEventListener("popstate", handlePopState);
+    return () => window.removeEventListener("popstate", handlePopState);
   }, []);
 
-  const addElement = useCallback((element: Omit<CanvasElement, 'id'>) => {
+  const addElement = useCallback((element: Omit<CanvasElement, "id">) => {
     const newElement: CanvasElement = {
       ...element,
       id: `element_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`,
     };
-    setElements(prev => [...prev, newElement]);
+    setElements((prev) => [...prev, newElement]);
     setSelectedElement(newElement);
   }, []);
 
-  const updateElement = useCallback((id: string, updates: Partial<CanvasElement>) => {
-    setElements(prev => prev.map(el => el.id === id ? { ...el, ...updates } : el));
-    if (selectedElement?.id === id) {
-      setSelectedElement(prev => prev ? { ...prev, ...updates } : null);
-    }
-  }, [selectedElement]);
+  const updateElement = useCallback(
+    (id: string, updates: Partial<CanvasElement>) => {
+      setElements((prev) =>
+        prev.map((el) => (el.id === id ? { ...el, ...updates } : el))
+      );
+      if (selectedElement?.id === id) {
+        setSelectedElement((prev) => (prev ? { ...prev, ...updates } : null));
+      }
+    },
+    [selectedElement]
+  );
 
-  const deleteElement = useCallback((id: string) => {
-    setElements(prev => prev.filter(el => el.id !== id));
-    if (selectedElement?.id === id) {
-      setSelectedElement(null);
-    }
-  }, [selectedElement]);
+  const deleteElement = useCallback(
+    (id: string) => {
+      setElements((prev) => prev.filter((el) => el.id !== id));
+      if (selectedElement?.id === id) {
+        setSelectedElement(null);
+      }
+    },
+    [selectedElement]
+  );
 
   const duplicateElement = useCallback((element: CanvasElement) => {
     const newElement: CanvasElement = {
@@ -118,86 +144,108 @@ function App() {
       y: element.y + 20,
       variableName: `${element.variableName}_copy`,
     };
-    setElements(prev => [...prev, newElement]);
+    setElements((prev) => [...prev, newElement]);
     setSelectedElement(newElement);
   }, []);
 
-  const handleCanvasConfigChange = useCallback((newConfig: CanvasConfig) => {
-    // Check if canvas size changed
-    const sizeChanged = newConfig.width !== canvasConfig.width || newConfig.height !== canvasConfig.height;
-    
-    if (sizeChanged) {
-      // Constrain elements to new canvas boundaries
-      const constrainedElements = constrainElementsToCanvas(newConfig, elements);
-      setElements(constrainedElements);
-      
-      // Update selected element if it was constrained
-      if (selectedElement) {
-        const constrainedSelected = constrainedElements.find(el => el.id === selectedElement.id);
-        if (constrainedSelected && (constrainedSelected.x !== selectedElement.x || constrainedSelected.y !== selectedElement.y)) {
-          setSelectedElement(constrainedSelected);
+  const handleCanvasConfigChange = useCallback(
+    (newConfig: CanvasConfig) => {
+      // Check if canvas size changed
+      const sizeChanged =
+        newConfig.width !== canvasConfig.width ||
+        newConfig.height !== canvasConfig.height;
+
+      if (sizeChanged) {
+        // Constrain elements to new canvas boundaries
+        const constrainedElements = constrainElementsToCanvas(
+          newConfig,
+          elements
+        );
+        setElements(constrainedElements);
+
+        // Update selected element if it was constrained
+        if (selectedElement) {
+          const constrainedSelected = constrainedElements.find(
+            (el) => el.id === selectedElement.id
+          );
+          if (
+            constrainedSelected &&
+            (constrainedSelected.x !== selectedElement.x ||
+              constrainedSelected.y !== selectedElement.y)
+          ) {
+            setSelectedElement(constrainedSelected);
+          }
         }
       }
-    }
-    
-    setCanvasConfig(newConfig);
-  }, [canvasConfig, elements, selectedElement, constrainElementsToCanvas]);
 
-  const loadTemplate = useCallback((config: CanvasConfig, elements: CanvasElement[], templateId?: string, templateName?: string) => {
-    setCanvasConfig(config);
-    setElements(elements);
-    setSelectedElement(null);
-    setCurrentTemplateId(templateId || null);
-    setCurrentTemplateName(templateName || '');
-    setCurrentView('editor');
-    
-    // Update URL with template ID if provided
-    if (templateId) {
-      const newUrl = new URL(window.location.href);
-      newUrl.searchParams.set('template', templateId);
-      window.history.pushState({}, '', newUrl.toString());
-    }
-  }, []);
+      setCanvasConfig(newConfig);
+    },
+    [canvasConfig, elements, selectedElement, constrainElementsToCanvas]
+  );
+
+  const loadTemplate = useCallback(
+    (
+      config: CanvasConfig,
+      elements: CanvasElement[],
+      templateId?: string,
+      templateName?: string
+    ) => {
+      setCanvasConfig(config);
+      setElements(elements);
+      setSelectedElement(null);
+      setCurrentTemplateId(templateId || null);
+      setCurrentTemplateName(templateName || "");
+      setCurrentView("editor");
+
+      // Update URL with template ID if provided
+      if (templateId) {
+        const newUrl = new URL(window.location.href);
+        newUrl.searchParams.set("template", templateId);
+        window.history.pushState({}, "", newUrl.toString());
+      }
+    },
+    []
+  );
 
   const createNewTemplate = useCallback(() => {
     setCanvasConfig({
       width: 800,
       height: 600,
-      backgroundImage: '',
+      backgroundImage: "",
     });
     setElements([]);
     setSelectedElement(null);
     setCurrentTemplateId(null);
-    setCurrentTemplateName('');
-    setCurrentView('editor');
+    setCurrentTemplateName("");
+    setCurrentView("editor");
   }, []);
 
   const goToDashboard = useCallback(() => {
-    setCurrentView('dashboard');
+    setCurrentView("dashboard");
     // Remove template parameter from URL when going back to dashboard
     const url = new URL(window.location.href);
-    url.searchParams.delete('template');
-    window.history.replaceState({}, '', url.toString());
+    url.searchParams.delete("template");
+    window.history.replaceState({}, "", url.toString());
   }, []);
 
   const handleTemplateUpdated = useCallback(() => {
-    console.log('Template updated successfully!');
+    console.log("Template updated successfully!");
   }, []);
 
   const handleLogin = useCallback(() => {
     setIsAuthenticated(true);
-    localStorage.setItem('isAuthenticated', 'true');
+    localStorage.setItem("isAuthenticated", "true");
   }, []);
 
   const handleLogout = useCallback(() => {
     setIsAuthenticated(false);
-    localStorage.removeItem('isAuthenticated');
-    setCurrentView('dashboard');
+    localStorage.removeItem("isAuthenticated");
+    setCurrentView("dashboard");
     // Clear any sensitive data
     setElements([]);
     setSelectedElement(null);
     setCurrentTemplateId(null);
-    setCurrentTemplateName('');
+    setCurrentTemplateName("");
   }, []);
 
   // If not authenticated, show login page
@@ -205,12 +253,12 @@ function App() {
     return <Login onLogin={handleLogin} />;
   }
 
-  if (currentView === 'dashboard') {
+  if (currentView === "dashboard") {
     return (
       <div className="min-h-screen bg-gray-50 flex flex-col">
         <Header onLogout={handleLogout} />
         <div className="flex-1">
-          <Dashboard 
+          <Dashboard
             onLoadTemplate={loadTemplate}
             onCreateNew={createNewTemplate}
           />
@@ -222,10 +270,14 @@ function App() {
   return (
     <div className="min-h-screen bg-gray-50 flex flex-col">
       <Header onLogout={handleLogout} />
-      
+
       <div className="flex-1 flex">
         {/* Properties Panel */}
-        <div className={`transition-all duration-300 ${showSettings ? 'w-80' : 'w-0'} overflow-hidden bg-white border-r border-gray-200`}>
+        <div
+          className={`transition-all duration-300 ${
+            showSettings ? "w-80" : "w-0"
+          } overflow-hidden bg-white border-r border-gray-200`}
+        >
           <PropertiesPanel
             canvasConfig={canvasConfig}
             onCanvasConfigChange={handleCanvasConfigChange}
@@ -257,7 +309,11 @@ function App() {
               </button>
               <button
                 onClick={() => setShowSettings(!showSettings)}
-                className={`p-2 rounded-lg transition-colors ${showSettings ? 'bg-blue-100 text-blue-600' : 'bg-gray-100 text-gray-600 hover:bg-gray-200'}`}
+                className={`p-2 rounded-lg transition-colors ${
+                  showSettings
+                    ? "bg-blue-100 text-blue-600"
+                    : "bg-gray-100 text-gray-600 hover:bg-gray-200"
+                }`}
               >
                 <Settings className="w-5 h-5" />
               </button>
@@ -265,7 +321,7 @@ function App() {
                 Canvas: {canvasConfig.width} × {canvasConfig.height}px
               </div>
             </div>
-            
+
             <div className="flex items-center space-x-3">
               <button
                 onClick={() => setShowLoadTemplate(true)}
@@ -351,14 +407,14 @@ function App() {
 
       {showSaveTemplate && (
         <SaveTemplateModal
-           config={canvasConfig}
-           elements={elements}
-           onClose={() => setShowSaveTemplate(false)}
-           onSaved={(templateId) => {
-             setCurrentTemplateId(templateId);
-             console.log('Template saved with ID:', templateId);
-           }}
-         />
+          config={canvasConfig}
+          elements={elements}
+          onClose={() => setShowSaveTemplate(false)}
+          onSaved={(templateId) => {
+            setCurrentTemplateId(templateId);
+            console.log("Template saved with ID:", templateId);
+          }}
+        />
       )}
 
       {showLoadTemplate && (

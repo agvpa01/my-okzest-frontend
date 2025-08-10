@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { CanvasConfig, CanvasElement, TextElement, ImageElement } from '../types/canvas';
 import { Type, Image, Upload, Plus, Trash2, Copy } from 'lucide-react';
+import { apiService } from '../services/api';
 
 interface PropertiesPanelProps {
   canvasConfig: CanvasConfig;
@@ -29,17 +30,19 @@ export const PropertiesPanel: React.FC<PropertiesPanelProps> = ({
 }) => {
   const [activeTab, setActiveTab] = useState<'canvas' | 'elements' | 'list'>('canvas');
 
-  const handleBackgroundUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleBackgroundUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (file) {
-      const reader = new FileReader();
-      reader.onload = (event) => {
+      try {
+        const { url } = await apiService.uploadImage(file);
         onCanvasConfigChange({
           ...canvasConfig,
-          backgroundImage: event.target?.result as string,
+          backgroundImage: url,
         });
-      };
-      reader.readAsDataURL(file);
+      } catch (error) {
+        console.error('Failed to upload background image:', error);
+        alert('Failed to upload image. Please try again.');
+      }
     }
   };
 
@@ -644,16 +647,18 @@ export const PropertiesPanel: React.FC<PropertiesPanelProps> = ({
                               <input
                                 type="file"
                                 accept="image/*"
-                                onChange={(e) => {
+                                onChange={async (e) => {
                                   const file = e.target.files?.[0];
                                   if (file) {
-                                    const reader = new FileReader();
-                                    reader.onload = (event) => {
+                                    try {
+                                      const { url } = await apiService.uploadImage(file);
                                       updateSelectedElement({ 
-                                        data: { ...selectedElement.data, src: event.target?.result as string }
+                                        data: { ...selectedElement.data, src: url }
                                       });
-                                    };
-                                    reader.readAsDataURL(file);
+                                    } catch (error) {
+                                      console.error('Failed to upload image:', error);
+                                      alert('Failed to upload image. Please try again.');
+                                    }
                                   }
                                 }}
                                 className="hidden"
