@@ -1,14 +1,9 @@
-// const API_BASE_URL = "http://localhost:3002/api/canvas";
-// const SCHEDULER_BASE_URL = "http://localhost:3002/api/scheduler";
-// const UPLOAD_BASE_URL = "http://localhost:3002/api";
+// Get base URL from environment variable, fallback to localhost for development
+const BASE_URL = import.meta.env.VITE_API_BASE_URL || "http://localhost:3002";
 
-// CHANGE BASE_URL For Production...
-const API_BASE_URL =
-  "https://z0oco0o80g4oggcs4k400wo0.coolify.vpa.com.au/api/canvas";
-const UPLOAD_BASE_URL =
-  "https://z0oco0o80g4oggcs4k400wo0.coolify.vpa.com.au/api";
-const SCHEDULER_BASE_URL =
-  "https://z0oco0o80g4oggcs4k400wo0.coolify.vpa.com.au/api/scheduler";
+const API_BASE_URL = `${BASE_URL}/api/canvas`;
+const UPLOAD_BASE_URL = `${BASE_URL}/api`;
+const SCHEDULER_BASE_URL = `${BASE_URL}/api/scheduler`;
 
 export interface Category {
   id: string;
