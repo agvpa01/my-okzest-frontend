@@ -1,13 +1,14 @@
-const API_BASE_URL = "http://localhost:3002/api/canvas";
-const SCHEDULER_BASE_URL = "http://localhost:3002/api/scheduler";
-const UPLOAD_BASE_URL = "http://localhost:3002/api";
+// const API_BASE_URL = "http://localhost:3002/api/canvas";
+// const SCHEDULER_BASE_URL = "http://localhost:3002/api/scheduler";
+// const UPLOAD_BASE_URL = "http://localhost:3002/api";
 
-// const API_BASE_URL =
-//   "https://z0oco0o80g4oggcs4k400wo0.coolify.vpa.com.au/api/canvas";
-// const UPLOAD_BASE_URL =
-//   "https://z0oco0o80g4oggcs4k400wo0.coolify.vpa.com.au/api";
-// const SCHEDULER_BASE_URL =
-//   "https://z0oco0o80g4oggcs4k400wo0.coolify.vpa.com.au/api/scheduler";
+// CHANGE BASE_URL For Production...
+const API_BASE_URL =
+  "https://z0oco0o80g4oggcs4k400wo0.coolify.vpa.com.au/api/canvas";
+const UPLOAD_BASE_URL =
+  "https://z0oco0o80g4oggcs4k400wo0.coolify.vpa.com.au/api";
+const SCHEDULER_BASE_URL =
+  "https://z0oco0o80g4oggcs4k400wo0.coolify.vpa.com.au/api/scheduler";
 
 export interface Category {
   id: string;
