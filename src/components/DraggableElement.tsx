@@ -67,8 +67,25 @@ export const DraggableElement: React.FC<DraggableElementProps> = ({
 
   const handleMouseMove = useCallback((e: MouseEvent) => {
     if (isDragging) {
-      const newX = Math.max(0, Math.min(canvasWidth - 100, e.clientX - dragStart.x));
-      const newY = Math.max(0, Math.min(canvasHeight - 50, e.clientY - dragStart.y));
+      // Get actual element dimensions - use rendered dimensions when available
+      let elementWidth = element.data.width || (element.data.type === 'text' ? 200 : 150);
+      let elementHeight = element.data.height || (element.data.type === 'text' ? 50 : 100);
+      
+      // For better accuracy, use actual rendered dimensions if available
+      if (elementRef.current) {
+        const rect = elementRef.current.getBoundingClientRect();
+        if (!element.data.width) {
+          elementWidth = rect.width;
+        }
+        if (!element.data.height) {
+          elementHeight = rect.height;
+        }
+      }
+      
+      // Calculate new position with proper boundary constraints
+      const newX = Math.max(0, Math.min(canvasWidth - elementWidth, e.clientX - dragStart.x));
+      const newY = Math.max(0, Math.min(canvasHeight - elementHeight, e.clientY - dragStart.y));
+      
       onUpdate({ x: newX, y: newY });
     } else if (isResizing && (element.data.type === 'image' || element.data.type === 'text')) {
       const deltaX = e.clientX - resizeStart.x;
@@ -79,25 +96,54 @@ export const DraggableElement: React.FC<DraggableElementProps> = ({
       let newX = element.x;
       let newY = element.y;
       
-      // Handle width changes
+      // Handle width changes with canvas boundary constraints
       if (resizeHandle.includes('right')) {
-        newWidth = Math.max(20, resizeStart.width + deltaX);
+        const maxWidth = canvasWidth - element.x;
+        newWidth = Math.max(20, Math.min(maxWidth, resizeStart.width + deltaX));
       }
       if (resizeHandle.includes('left')) {
-        const widthChange = Math.max(20, resizeStart.width - deltaX) - resizeStart.width;
-        newWidth = Math.max(20, resizeStart.width - deltaX);
-        newX = element.x - widthChange;
+        const maxWidthIncrease = element.x;
+        const proposedWidth = Math.max(20, resizeStart.width - deltaX);
+        const actualWidthIncrease = proposedWidth - resizeStart.width;
+        const constrainedWidthIncrease = Math.min(actualWidthIncrease, maxWidthIncrease);
+        newWidth = resizeStart.width + constrainedWidthIncrease;
+        newX = element.x - constrainedWidthIncrease;
       }
       
-      // Handle height changes
+      // Handle height changes with canvas boundary constraints
       if (resizeHandle.includes('bottom')) {
-        newHeight = Math.max(20, resizeStart.height + deltaY);
+        const maxHeight = canvasHeight - element.y;
+        newHeight = Math.max(20, Math.min(maxHeight, resizeStart.height + deltaY));
       }
       if (resizeHandle.includes('top')) {
-        const heightChange = Math.max(20, resizeStart.height - deltaY) - resizeStart.height;
-        newHeight = Math.max(20, resizeStart.height - deltaY);
-        newY = element.y - heightChange;
+        const maxHeightIncrease = element.y;
+        const proposedHeight = Math.max(20, resizeStart.height - deltaY);
+        const actualHeightIncrease = proposedHeight - resizeStart.height;
+        const constrainedHeightIncrease = Math.min(actualHeightIncrease, maxHeightIncrease);
+        newHeight = resizeStart.height + constrainedHeightIncrease;
+        newY = element.y - constrainedHeightIncrease;
       }
+      
+      // Additional boundary check to ensure element stays within canvas after resize
+      // This handles edge cases where corner resizing might still go out of bounds
+      if (newX + newWidth > canvasWidth) {
+        newWidth = canvasWidth - newX;
+      }
+      if (newY + newHeight > canvasHeight) {
+        newHeight = canvasHeight - newY;
+      }
+      if (newX < 0) {
+        newWidth = newWidth + newX;
+        newX = 0;
+      }
+      if (newY < 0) {
+        newHeight = newHeight + newY;
+        newY = 0;
+      }
+      
+      // Ensure minimum dimensions are maintained
+      newWidth = Math.max(20, newWidth);
+      newHeight = Math.max(20, newHeight);
       
       const updates: Partial<CanvasElement> = {
         data: {

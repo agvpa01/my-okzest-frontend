@@ -1,7 +1,12 @@
-import React, { useState } from 'react';
-import { CanvasConfig, CanvasElement, TextElement, ImageElement } from '../types/canvas';
-import { Type, Image, Upload, Plus, Trash2, Copy } from 'lucide-react';
-import { apiService } from '../services/api';
+import React, { useState } from "react";
+import {
+  CanvasConfig,
+  CanvasElement,
+  TextElement,
+  ImageElement,
+} from "../types/canvas";
+import { Type, Image, Upload, Plus, Trash2, Copy } from "lucide-react";
+import { apiService } from "../services/api";
 
 interface PropertiesPanelProps {
   canvasConfig: CanvasConfig;
@@ -10,7 +15,7 @@ interface PropertiesPanelProps {
   onElementUpdate: (id: string, updates: Partial<CanvasElement>) => void;
   onElementDelete: (id: string) => void;
   onElementDuplicate: (element: CanvasElement) => void;
-  onAddElement: (element: Omit<CanvasElement, 'id'>) => void;
+  onAddElement: (element: Omit<CanvasElement, "id">) => void;
   elements: CanvasElement[];
   isBackgroundSelected?: boolean;
   onElementSelect?: (element: CanvasElement) => void;
@@ -28,9 +33,15 @@ export const PropertiesPanel: React.FC<PropertiesPanelProps> = ({
   isBackgroundSelected = false,
   onElementSelect,
 }) => {
-  const [activeTab, setActiveTab] = useState<'canvas' | 'elements' | 'list'>('canvas');
+  const [activeTab, setActiveTab] = useState<"canvas" | "elements" | "list">(
+    "canvas"
+  );
 
-  const handleBackgroundUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+
+
+  const handleBackgroundUpload = async (
+    e: React.ChangeEvent<HTMLInputElement>
+  ) => {
     const file = e.target.files?.[0];
     if (file) {
       try {
@@ -40,8 +51,8 @@ export const PropertiesPanel: React.FC<PropertiesPanelProps> = ({
           backgroundImage: url,
         });
       } catch (error) {
-        console.error('Failed to upload background image:', error);
-        alert('Failed to upload image. Please try again.');
+        console.error("Failed to upload background image:", error);
+        alert("Failed to upload image. Please try again.");
       }
     }
   };
@@ -53,17 +64,17 @@ export const PropertiesPanel: React.FC<PropertiesPanelProps> = ({
       y: 50,
       variableName,
       data: {
-        type: 'text',
-        content: 'Sample Text',
+        type: "text",
+        content: "Sample Text",
         fontSize: 24,
-        fontFamily: 'Arial, sans-serif',
-        fontWeight: 'normal',
-        color: '#000000',
-        textAlign: 'left',
-        letterSpacing: 'normal',
+        fontFamily: "Arial, sans-serif",
+        fontWeight: "normal",
+        color: "#000000",
+        textAlign: "left",
+        letterSpacing: "normal",
         width: 200,
         height: 50,
-        strokeColor: '#000000',
+        strokeColor: "#000000",
         strokeWidth: 0,
       } as TextElement,
     });
@@ -76,11 +87,11 @@ export const PropertiesPanel: React.FC<PropertiesPanelProps> = ({
       y: 50,
       variableName,
       data: {
-        type: 'image',
-        src: '',
+        type: "image",
+        src: "",
         width: 150,
         height: 100,
-        objectFit: 'cover',
+        objectFit: "cover",
       } as ImageElement,
     });
   };
@@ -96,31 +107,31 @@ export const PropertiesPanel: React.FC<PropertiesPanelProps> = ({
       {/* Tabs */}
       <div className="flex border-b border-gray-200">
         <button
-          onClick={() => setActiveTab('canvas')}
+          onClick={() => setActiveTab("canvas")}
           className={`flex-1 px-4 py-3 text-sm font-medium ${
-            activeTab === 'canvas'
-              ? 'text-blue-600 border-b-2 border-blue-600'
-              : 'text-gray-500 hover:text-gray-700'
+            activeTab === "canvas"
+              ? "text-blue-600 border-b-2 border-blue-600"
+              : "text-gray-500 hover:text-gray-700"
           }`}
         >
           Canvas
         </button>
         <button
-          onClick={() => setActiveTab('elements')}
+          onClick={() => setActiveTab("elements")}
           className={`flex-1 px-4 py-3 text-sm font-medium ${
-            activeTab === 'elements'
-              ? 'text-blue-600 border-b-2 border-blue-600'
-              : 'text-gray-500 hover:text-gray-700'
+            activeTab === "elements"
+              ? "text-blue-600 border-b-2 border-blue-600"
+              : "text-gray-500 hover:text-gray-700"
           }`}
         >
           Elements
         </button>
         <button
-          onClick={() => setActiveTab('list')}
+          onClick={() => setActiveTab("list")}
           className={`flex-1 px-4 py-3 text-sm font-medium ${
-            activeTab === 'list'
-              ? 'text-blue-600 border-b-2 border-blue-600'
-              : 'text-gray-500 hover:text-gray-700'
+            activeTab === "list"
+              ? "text-blue-600 border-b-2 border-blue-600"
+              : "text-gray-500 hover:text-gray-700"
           }`}
         >
           List
@@ -128,11 +139,13 @@ export const PropertiesPanel: React.FC<PropertiesPanelProps> = ({
       </div>
 
       <div className="flex-1 overflow-auto p-4">
-        {activeTab === 'canvas' && (
+        {activeTab === "canvas" && (
           <div className="space-y-6">
             <div>
-              <h3 className="text-lg font-medium text-gray-900 mb-4">Canvas Settings</h3>
-              
+              <h3 className="text-lg font-medium text-gray-900 mb-4">
+                Canvas Settings
+              </h3>
+
               <div className="space-y-4">
                 <div className="grid grid-cols-2 gap-3">
                   <div>
@@ -142,10 +155,12 @@ export const PropertiesPanel: React.FC<PropertiesPanelProps> = ({
                     <input
                       type="number"
                       value={canvasConfig.width}
-                      onChange={(e) => onCanvasConfigChange({
-                        ...canvasConfig,
-                        width: parseInt(e.target.value) || 800
-                      })}
+                      onChange={(e) =>
+                        onCanvasConfigChange({
+                          ...canvasConfig,
+                          width: parseInt(e.target.value) || 800,
+                        })
+                      }
                       className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500"
                     />
                   </div>
@@ -156,10 +171,12 @@ export const PropertiesPanel: React.FC<PropertiesPanelProps> = ({
                     <input
                       type="number"
                       value={canvasConfig.height}
-                      onChange={(e) => onCanvasConfigChange({
-                        ...canvasConfig,
-                        height: parseInt(e.target.value) || 600
-                      })}
+                      onChange={(e) =>
+                        onCanvasConfigChange({
+                          ...canvasConfig,
+                          height: parseInt(e.target.value) || 600,
+                        })
+                      }
                       className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500"
                     />
                   </div>
@@ -183,7 +200,12 @@ export const PropertiesPanel: React.FC<PropertiesPanelProps> = ({
                       </label>
                       {canvasConfig.backgroundImage && (
                         <button
-                          onClick={() => onCanvasConfigChange({ ...canvasConfig, backgroundImage: '' })}
+                          onClick={() =>
+                            onCanvasConfigChange({
+                              ...canvasConfig,
+                              backgroundImage: "",
+                            })
+                          }
                           className="px-3 py-2 text-red-600 hover:bg-red-50 rounded-md"
                         >
                           Clear
@@ -194,11 +216,17 @@ export const PropertiesPanel: React.FC<PropertiesPanelProps> = ({
                       <input
                         type="url"
                         placeholder="Or enter image URL..."
-                        value={canvasConfig.backgroundImage?.startsWith('http') ? canvasConfig.backgroundImage : ''}
-                        onChange={(e) => onCanvasConfigChange({
-                          ...canvasConfig,
-                          backgroundImage: e.target.value
-                        })}
+                        value={
+                          canvasConfig.backgroundImage?.startsWith("http")
+                            ? canvasConfig.backgroundImage
+                            : ""
+                        }
+                        onChange={(e) =>
+                          onCanvasConfigChange({
+                            ...canvasConfig,
+                            backgroundImage: e.target.value,
+                          })
+                        }
                         className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500 text-sm"
                       />
                     </div>
@@ -208,7 +236,9 @@ export const PropertiesPanel: React.FC<PropertiesPanelProps> = ({
             </div>
 
             <div>
-              <h3 className="text-lg font-medium text-gray-900 mb-4">Add Elements</h3>
+              <h3 className="text-lg font-medium text-gray-900 mb-4">
+                Add Elements
+              </h3>
               <div className="space-y-3">
                 <button
                   onClick={addTextElement}
@@ -229,7 +259,7 @@ export const PropertiesPanel: React.FC<PropertiesPanelProps> = ({
           </div>
         )}
 
-        {activeTab === 'elements' && (
+        {activeTab === "elements" && (
           <div className="space-y-4">
             {isBackgroundSelected ? (
               <div>
@@ -248,10 +278,12 @@ export const PropertiesPanel: React.FC<PropertiesPanelProps> = ({
                       <input
                         type="number"
                         value={canvasConfig.backgroundImageX || 0}
-                        onChange={(e) => onCanvasConfigChange({
-                          ...canvasConfig,
-                          backgroundImageX: parseInt(e.target.value) || 0
-                        })}
+                        onChange={(e) =>
+                          onCanvasConfigChange({
+                            ...canvasConfig,
+                            backgroundImageX: parseInt(e.target.value) || 0,
+                          })
+                        }
                         className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500"
                       />
                     </div>
@@ -262,10 +294,12 @@ export const PropertiesPanel: React.FC<PropertiesPanelProps> = ({
                       <input
                         type="number"
                         value={canvasConfig.backgroundImageY || 0}
-                        onChange={(e) => onCanvasConfigChange({
-                          ...canvasConfig,
-                          backgroundImageY: parseInt(e.target.value) || 0
-                        })}
+                        onChange={(e) =>
+                          onCanvasConfigChange({
+                            ...canvasConfig,
+                            backgroundImageY: parseInt(e.target.value) || 0,
+                          })
+                        }
                         className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500"
                       />
                     </div>
@@ -278,11 +312,17 @@ export const PropertiesPanel: React.FC<PropertiesPanelProps> = ({
                       </label>
                       <input
                         type="number"
-                        value={canvasConfig.backgroundImageWidth || canvasConfig.width}
-                        onChange={(e) => onCanvasConfigChange({
-                          ...canvasConfig,
-                          backgroundImageWidth: parseInt(e.target.value) || canvasConfig.width
-                        })}
+                        value={
+                          canvasConfig.backgroundImageWidth ||
+                          canvasConfig.width
+                        }
+                        onChange={(e) =>
+                          onCanvasConfigChange({
+                            ...canvasConfig,
+                            backgroundImageWidth:
+                              parseInt(e.target.value) || canvasConfig.width,
+                          })
+                        }
                         className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500"
                       />
                     </div>
@@ -292,11 +332,17 @@ export const PropertiesPanel: React.FC<PropertiesPanelProps> = ({
                       </label>
                       <input
                         type="number"
-                        value={canvasConfig.backgroundImageHeight || canvasConfig.height}
-                        onChange={(e) => onCanvasConfigChange({
-                          ...canvasConfig,
-                          backgroundImageHeight: parseInt(e.target.value) || canvasConfig.height
-                        })}
+                        value={
+                          canvasConfig.backgroundImageHeight ||
+                          canvasConfig.height
+                        }
+                        onChange={(e) =>
+                          onCanvasConfigChange({
+                            ...canvasConfig,
+                            backgroundImageHeight:
+                              parseInt(e.target.value) || canvasConfig.height,
+                          })
+                        }
                         className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500"
                       />
                     </div>
@@ -307,11 +353,17 @@ export const PropertiesPanel: React.FC<PropertiesPanelProps> = ({
                       Object Fit
                     </label>
                     <select
-                      value={canvasConfig.backgroundImageObjectFit || 'cover'}
-                      onChange={(e) => onCanvasConfigChange({
-                        ...canvasConfig,
-                        backgroundImageObjectFit: e.target.value as 'cover' | 'contain' | 'fill' | 'none'
-                      })}
+                      value={canvasConfig.backgroundImageObjectFit || "cover"}
+                      onChange={(e) =>
+                        onCanvasConfigChange({
+                          ...canvasConfig,
+                          backgroundImageObjectFit: e.target.value as
+                            | "cover"
+                            | "contain"
+                            | "fill"
+                            | "none",
+                        })
+                      }
                       className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500"
                     >
                       <option value="cover">Cover</option>
@@ -352,7 +404,9 @@ export const PropertiesPanel: React.FC<PropertiesPanelProps> = ({
                     <input
                       type="text"
                       value={selectedElement.variableName}
-                      onChange={(e) => updateSelectedElement({ variableName: e.target.value })}
+                      onChange={(e) =>
+                        updateSelectedElement({ variableName: e.target.value })
+                      }
                       className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500"
                     />
                   </div>
@@ -365,7 +419,11 @@ export const PropertiesPanel: React.FC<PropertiesPanelProps> = ({
                       <input
                         type="number"
                         value={selectedElement.x}
-                        onChange={(e) => updateSelectedElement({ x: parseInt(e.target.value) || 0 })}
+                        onChange={(e) =>
+                          updateSelectedElement({
+                            x: parseInt(e.target.value) || 0,
+                          })
+                        }
                         className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500"
                       />
                     </div>
@@ -376,13 +434,17 @@ export const PropertiesPanel: React.FC<PropertiesPanelProps> = ({
                       <input
                         type="number"
                         value={selectedElement.y}
-                        onChange={(e) => updateSelectedElement({ y: parseInt(e.target.value) || 0 })}
+                        onChange={(e) =>
+                          updateSelectedElement({
+                            y: parseInt(e.target.value) || 0,
+                          })
+                        }
                         className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500"
                       />
                     </div>
                   </div>
 
-                  {selectedElement.data.type === 'text' && (
+                  {selectedElement.data.type === "text" && (
                     <div className="space-y-4">
                       <div>
                         <label className="block text-sm font-medium text-gray-700 mb-1">
@@ -391,9 +453,14 @@ export const PropertiesPanel: React.FC<PropertiesPanelProps> = ({
                         <input
                           type="text"
                           value={selectedElement.data.content}
-                          onChange={(e) => updateSelectedElement({ 
-                            data: { ...selectedElement.data, content: e.target.value }
-                          })}
+                          onChange={(e) =>
+                            updateSelectedElement({
+                              data: {
+                                ...selectedElement.data,
+                                content: e.target.value,
+                              },
+                            })
+                          }
                           className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500"
                         />
                       </div>
@@ -406,9 +473,14 @@ export const PropertiesPanel: React.FC<PropertiesPanelProps> = ({
                           <input
                             type="number"
                             value={selectedElement.data.fontSize}
-                            onChange={(e) => updateSelectedElement({ 
-                              data: { ...selectedElement.data, fontSize: parseInt(e.target.value) || 16 }
-                            })}
+                            onChange={(e) =>
+                              updateSelectedElement({
+                                data: {
+                                  ...selectedElement.data,
+                                  fontSize: parseInt(e.target.value) || 16,
+                                },
+                              })
+                            }
                             className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500"
                           />
                         </div>
@@ -419,9 +491,14 @@ export const PropertiesPanel: React.FC<PropertiesPanelProps> = ({
                           <input
                             type="color"
                             value={selectedElement.data.color}
-                            onChange={(e) => updateSelectedElement({ 
-                              data: { ...selectedElement.data, color: e.target.value }
-                            })}
+                            onChange={(e) =>
+                              updateSelectedElement({
+                                data: {
+                                  ...selectedElement.data,
+                                  color: e.target.value,
+                                },
+                              })
+                            }
                             className="w-full h-10 px-1 py-1 border border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500"
                           />
                         </div>
@@ -433,74 +510,136 @@ export const PropertiesPanel: React.FC<PropertiesPanelProps> = ({
                         </label>
                         <select
                           value={selectedElement.data.fontFamily}
-                          onChange={(e) => updateSelectedElement({ 
-                            data: { ...selectedElement.data, fontFamily: e.target.value }
-                          })}
+                          onChange={(e) =>
+                            updateSelectedElement({
+                              data: {
+                                ...selectedElement.data,
+                                fontFamily: e.target.value,
+                              },
+                            })
+                          }
                           className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500"
                         >
                           <optgroup label="Sans Serif">
                             <option value="Arial, sans-serif">Arial</option>
-                            <option value="Helvetica, sans-serif">Helvetica</option>
+                            <option value="Helvetica, sans-serif">
+                              Helvetica
+                            </option>
                             <option value="Verdana, sans-serif">Verdana</option>
                             <option value="Calibri, sans-serif">Calibri</option>
                             <option value="Tahoma, sans-serif">Tahoma</option>
-                            <option value="Trebuchet MS, sans-serif">Trebuchet MS</option>
-                            <option value="Lucida Sans Unicode, sans-serif">Lucida Sans Unicode</option>
-                            <option value="Franklin Gothic Medium, sans-serif">Franklin Gothic Medium</option>
-                            <option value="Century Gothic, sans-serif">Century Gothic</option>
+                            <option value="Trebuchet MS, sans-serif">
+                              Trebuchet MS
+                            </option>
+                            <option value="Lucida Sans Unicode, sans-serif">
+                              Lucida Sans Unicode
+                            </option>
+                            <option value="Franklin Gothic Medium, sans-serif">
+                              Franklin Gothic Medium
+                            </option>
+                            <option value="Century Gothic, sans-serif">
+                              Century Gothic
+                            </option>
                             <option value="Futura, sans-serif">Futura</option>
-                            <option value="Gill Sans, sans-serif">Gill Sans</option>
+                            <option value="Gill Sans, sans-serif">
+                              Gill Sans
+                            </option>
                             <option value="Optima, sans-serif">Optima</option>
                           </optgroup>
                           <optgroup label="Serif">
-                            <option value="Times New Roman, serif">Times New Roman</option>
+                            <option value="Times New Roman, serif">
+                              Times New Roman
+                            </option>
                             <option value="Georgia, serif">Georgia</option>
                             <option value="Times, serif">Times</option>
                             <option value="Palatino, serif">Palatino</option>
-                            <option value="Book Antiqua, serif">Book Antiqua</option>
-                            <option value="Baskerville, serif">Baskerville</option>
+                            <option value="Book Antiqua, serif">
+                              Book Antiqua
+                            </option>
+                            <option value="Baskerville, serif">
+                              Baskerville
+                            </option>
                             <option value="Garamond, serif">Garamond</option>
-                            <option value="Minion Pro, serif">Minion Pro</option>
+                            <option value="Minion Pro, serif">
+                              Minion Pro
+                            </option>
                             <option value="Cambria, serif">Cambria</option>
                             <option value="Caslon, serif">Caslon</option>
                           </optgroup>
                           <optgroup label="Monospace">
-                            <option value="Courier New, monospace">Courier New</option>
+                            <option value="Courier New, monospace">
+                              Courier New
+                            </option>
                             <option value="Monaco, monospace">Monaco</option>
-                            <option value="Consolas, monospace">Consolas</option>
+                            <option value="Consolas, monospace">
+                              Consolas
+                            </option>
                             <option value="Menlo, monospace">Menlo</option>
-                            <option value="Source Code Pro, monospace">Source Code Pro</option>
-                            <option value="Fira Code, monospace">Fira Code</option>
-                            <option value="JetBrains Mono, monospace">JetBrains Mono</option>
-                            <option value="Roboto Mono, monospace">Roboto Mono</option>
+                            <option value="Source Code Pro, monospace">
+                              Source Code Pro
+                            </option>
+                            <option value="Fira Code, monospace">
+                              Fira Code
+                            </option>
+                            <option value="JetBrains Mono, monospace">
+                              JetBrains Mono
+                            </option>
+                            <option value="Roboto Mono, monospace">
+                              Roboto Mono
+                            </option>
                           </optgroup>
                           <optgroup label="Display & Decorative">
                             <option value="Impact, sans-serif">Impact</option>
-                            <option value="Arial Black, sans-serif">Arial Black</option>
-                            <option value="Bebas Neue, sans-serif">Bebas Neue</option>
+                            <option value="Bebas Neue, sans-serif">
+                              Bebas Neue
+                            </option>
                             <option value="Oswald, sans-serif">Oswald</option>
-                            <option value="Montserrat, sans-serif">Montserrat</option>
-                            <option value="Playfair Display, serif">Playfair Display</option>
-                            <option value="Merriweather, serif">Merriweather</option>
+                            <option value="Montserrat, sans-serif">
+                              Montserrat
+                            </option>
+                            <option value="Playfair Display, serif">
+                              Playfair Display
+                            </option>
+                            <option value="Merriweather, serif">
+                              Merriweather
+                            </option>
                             <option value="Lora, serif">Lora</option>
                             <option value="Raleway, sans-serif">Raleway</option>
-                            <option value="Open Sans, sans-serif">Open Sans</option>
+                            <option value="Open Sans, sans-serif">
+                              Open Sans
+                            </option>
                             <option value="Roboto, sans-serif">Roboto</option>
                             <option value="Lato, sans-serif">Lato</option>
                             <option value="Poppins, sans-serif">Poppins</option>
                             <option value="Nunito, sans-serif">Nunito</option>
-                            <option value="Source Sans Pro, sans-serif">Source Sans Pro</option>
+                            <option value="Source Sans Pro, sans-serif">
+                              Source Sans Pro
+                            </option>
                           </optgroup>
                           <optgroup label="Script & Handwriting">
-                            <option value="Comic Sans MS, cursive">Comic Sans MS</option>
-                            <option value="Brush Script MT, cursive">Brush Script MT</option>
-                            <option value="Lucida Handwriting, cursive">Lucida Handwriting</option>
-                            <option value="Dancing Script, cursive">Dancing Script</option>
+                            <option value="Comic Sans MS, cursive">
+                              Comic Sans MS
+                            </option>
+                            <option value="Brush Script MT, cursive">
+                              Brush Script MT
+                            </option>
+                            <option value="Lucida Handwriting, cursive">
+                              Lucida Handwriting
+                            </option>
+                            <option value="Dancing Script, cursive">
+                              Dancing Script
+                            </option>
                             <option value="Pacifico, cursive">Pacifico</option>
-                            <option value="Great Vibes, cursive">Great Vibes</option>
+                            <option value="Great Vibes, cursive">
+                              Great Vibes
+                            </option>
                             <option value="Satisfy, cursive">Satisfy</option>
-                            <option value="Kaushan Script, cursive">Kaushan Script</option>
-                            <option value="Amatic SC, cursive">Amatic SC</option>
+                            <option value="Kaushan Script, cursive">
+                              Kaushan Script
+                            </option>
+                            <option value="Amatic SC, cursive">
+                              Amatic SC
+                            </option>
                             <option value="Caveat, cursive">Caveat</option>
                           </optgroup>
                         </select>
@@ -512,9 +651,14 @@ export const PropertiesPanel: React.FC<PropertiesPanelProps> = ({
                         </label>
                         <select
                           value={selectedElement.data.fontWeight}
-                          onChange={(e) => updateSelectedElement({ 
-                            data: { ...selectedElement.data, fontWeight: e.target.value }
-                          })}
+                          onChange={(e) =>
+                            updateSelectedElement({
+                              data: {
+                                ...selectedElement.data,
+                                fontWeight: e.target.value,
+                              },
+                            })
+                          }
                           className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500"
                         >
                           <option value="normal">Normal</option>
@@ -537,16 +681,25 @@ export const PropertiesPanel: React.FC<PropertiesPanelProps> = ({
                           Letter Spacing
                         </label>
                         <select
-                          value={selectedElement.data.letterSpacing || 'normal'}
-                          onChange={(e) => updateSelectedElement({ 
-                            data: { ...selectedElement.data, letterSpacing: e.target.value }
-                          })}
+                          value={selectedElement.data.letterSpacing || "normal"}
+                          onChange={(e) =>
+                            updateSelectedElement({
+                              data: {
+                                ...selectedElement.data,
+                                letterSpacing: e.target.value,
+                              },
+                            })
+                          }
                           className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500"
                         >
                           <option value="-0.05em">Tight (-0.05em)</option>
-                          <option value="-0.025em">Slightly Tight (-0.025em)</option>
+                          <option value="-0.025em">
+                            Slightly Tight (-0.025em)
+                          </option>
                           <option value="normal">Normal</option>
-                          <option value="0.025em">Slightly Wide (0.025em)</option>
+                          <option value="0.025em">
+                            Slightly Wide (0.025em)
+                          </option>
                           <option value="0.05em">Wide (0.05em)</option>
                           <option value="0.1em">Extra Wide (0.1em)</option>
                           <option value="0.15em">Ultra Wide (0.15em)</option>
@@ -559,9 +712,17 @@ export const PropertiesPanel: React.FC<PropertiesPanelProps> = ({
                         </label>
                         <select
                           value={selectedElement.data.textAlign}
-                          onChange={(e) => updateSelectedElement({ 
-                            data: { ...selectedElement.data, textAlign: e.target.value as 'left' | 'center' | 'right' }
-                          })}
+                          onChange={(e) =>
+                            updateSelectedElement({
+                              data: {
+                                ...selectedElement.data,
+                                textAlign: e.target.value as
+                                  | "left"
+                                  | "center"
+                                  | "right",
+                              },
+                            })
+                          }
                           className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500"
                         >
                           <option value="left">Left</option>
@@ -577,10 +738,17 @@ export const PropertiesPanel: React.FC<PropertiesPanelProps> = ({
                           </label>
                           <input
                             type="color"
-                            value={selectedElement.data.strokeColor || '#000000'}
-                            onChange={(e) => updateSelectedElement({ 
-                              data: { ...selectedElement.data, strokeColor: e.target.value }
-                            })}
+                            value={
+                              selectedElement.data.strokeColor || "#000000"
+                            }
+                            onChange={(e) =>
+                              updateSelectedElement({
+                                data: {
+                                  ...selectedElement.data,
+                                  strokeColor: e.target.value,
+                                },
+                              })
+                            }
                             className="w-full h-10 border border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500"
                           />
                         </div>
@@ -594,9 +762,14 @@ export const PropertiesPanel: React.FC<PropertiesPanelProps> = ({
                             max="10"
                             step="0.5"
                             value={selectedElement.data.strokeWidth || 0}
-                            onChange={(e) => updateSelectedElement({ 
-                              data: { ...selectedElement.data, strokeWidth: parseFloat(e.target.value) || 0 }
-                            })}
+                            onChange={(e) =>
+                              updateSelectedElement({
+                                data: {
+                                  ...selectedElement.data,
+                                  strokeWidth: parseFloat(e.target.value) || 0,
+                                },
+                              })
+                            }
                             className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500"
                           />
                         </div>
@@ -610,9 +783,14 @@ export const PropertiesPanel: React.FC<PropertiesPanelProps> = ({
                           <input
                             type="number"
                             value={selectedElement.data.width || 200}
-                            onChange={(e) => updateSelectedElement({ 
-                              data: { ...selectedElement.data, width: parseInt(e.target.value) || 200 }
-                            })}
+                            onChange={(e) =>
+                              updateSelectedElement({
+                                data: {
+                                  ...selectedElement.data,
+                                  width: parseInt(e.target.value) || 200,
+                                },
+                              })
+                            }
                             className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500"
                           />
                         </div>
@@ -623,9 +801,14 @@ export const PropertiesPanel: React.FC<PropertiesPanelProps> = ({
                           <input
                             type="number"
                             value={selectedElement.data.height || 50}
-                            onChange={(e) => updateSelectedElement({ 
-                              data: { ...selectedElement.data, height: parseInt(e.target.value) || 50 }
-                            })}
+                            onChange={(e) =>
+                              updateSelectedElement({
+                                data: {
+                                  ...selectedElement.data,
+                                  height: parseInt(e.target.value) || 50,
+                                },
+                              })
+                            }
                             className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500"
                           />
                         </div>
@@ -633,7 +816,7 @@ export const PropertiesPanel: React.FC<PropertiesPanelProps> = ({
                     </div>
                   )}
 
-                  {selectedElement.data.type === 'image' && (
+                  {selectedElement.data.type === "image" && (
                     <div className="space-y-4">
                       <div>
                         <label className="block text-sm font-medium text-gray-700 mb-2">
@@ -651,13 +834,22 @@ export const PropertiesPanel: React.FC<PropertiesPanelProps> = ({
                                   const file = e.target.files?.[0];
                                   if (file) {
                                     try {
-                                      const { url } = await apiService.uploadImage(file);
-                                      updateSelectedElement({ 
-                                        data: { ...selectedElement.data, src: url }
+                                      const { url } =
+                                        await apiService.uploadImage(file);
+                                      updateSelectedElement({
+                                        data: {
+                                          ...selectedElement.data,
+                                          src: url,
+                                        },
                                       });
                                     } catch (error) {
-                                      console.error('Failed to upload image:', error);
-                                      alert('Failed to upload image. Please try again.');
+                                      console.error(
+                                        "Failed to upload image:",
+                                        error
+                                      );
+                                      alert(
+                                        "Failed to upload image. Please try again."
+                                      );
                                     }
                                   }
                                 }}
@@ -666,9 +858,11 @@ export const PropertiesPanel: React.FC<PropertiesPanelProps> = ({
                             </label>
                             {selectedElement.data.src && (
                               <button
-                                onClick={() => updateSelectedElement({ 
-                                  data: { ...selectedElement.data, src: '' }
-                                })}
+                                onClick={() =>
+                                  updateSelectedElement({
+                                    data: { ...selectedElement.data, src: "" },
+                                  })
+                                }
                                 className="px-3 py-2 text-red-600 hover:bg-red-50 rounded-md"
                               >
                                 Clear
@@ -678,10 +872,19 @@ export const PropertiesPanel: React.FC<PropertiesPanelProps> = ({
                           <div className="relative">
                             <input
                               type="url"
-                              value={selectedElement.data.src?.startsWith('http') ? selectedElement.data.src : ''}
-                              onChange={(e) => updateSelectedElement({ 
-                                data: { ...selectedElement.data, src: e.target.value }
-                              })}
+                              value={
+                                selectedElement.data.src?.startsWith("http")
+                                  ? selectedElement.data.src
+                                  : ""
+                              }
+                              onChange={(e) =>
+                                updateSelectedElement({
+                                  data: {
+                                    ...selectedElement.data,
+                                    src: e.target.value,
+                                  },
+                                })
+                              }
                               placeholder="Or enter image URL..."
                               className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500 text-sm"
                             />
@@ -697,9 +900,14 @@ export const PropertiesPanel: React.FC<PropertiesPanelProps> = ({
                           <input
                             type="number"
                             value={selectedElement.data.width}
-                            onChange={(e) => updateSelectedElement({ 
-                              data: { ...selectedElement.data, width: parseInt(e.target.value) || 100 }
-                            })}
+                            onChange={(e) =>
+                              updateSelectedElement({
+                                data: {
+                                  ...selectedElement.data,
+                                  width: parseInt(e.target.value) || 100,
+                                },
+                              })
+                            }
                             className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500"
                           />
                         </div>
@@ -710,9 +918,14 @@ export const PropertiesPanel: React.FC<PropertiesPanelProps> = ({
                           <input
                             type="number"
                             value={selectedElement.data.height}
-                            onChange={(e) => updateSelectedElement({ 
-                              data: { ...selectedElement.data, height: parseInt(e.target.value) || 100 }
-                            })}
+                            onChange={(e) =>
+                              updateSelectedElement({
+                                data: {
+                                  ...selectedElement.data,
+                                  height: parseInt(e.target.value) || 100,
+                                },
+                              })
+                            }
                             className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500"
                           />
                         </div>
@@ -724,9 +937,17 @@ export const PropertiesPanel: React.FC<PropertiesPanelProps> = ({
                         </label>
                         <select
                           value={selectedElement.data.objectFit}
-                          onChange={(e) => updateSelectedElement({ 
-                            data: { ...selectedElement.data, objectFit: e.target.value as 'cover' | 'contain' | 'fill' }
-                          })}
+                          onChange={(e) =>
+                            updateSelectedElement({
+                              data: {
+                                ...selectedElement.data,
+                                objectFit: e.target.value as
+                                  | "cover"
+                                  | "contain"
+                                  | "fill",
+                              },
+                            })
+                          }
                           className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500"
                         >
                           <option value="cover">Cover</option>
@@ -743,24 +964,30 @@ export const PropertiesPanel: React.FC<PropertiesPanelProps> = ({
                 <div className="text-gray-400 mb-2">
                   <Plus className="w-12 h-12 mx-auto" />
                 </div>
-                <p className="text-gray-500">Select an element or background image to edit properties</p>
+                <p className="text-gray-500">
+                  Select an element or background image to edit properties
+                </p>
               </div>
             )}
           </div>
         )}
 
-        {activeTab === 'list' && (
+        {activeTab === "list" && (
           <div className="space-y-4">
             <div>
-              <h3 className="text-lg font-medium text-gray-900 mb-4">All Elements</h3>
-              
+              <h3 className="text-lg font-medium text-gray-900 mb-4">
+                All Elements
+              </h3>
+
               {elements.length === 0 ? (
                 <div className="text-center py-8">
                   <div className="text-gray-400 mb-2">
                     <Plus className="w-12 h-12 mx-auto" />
                   </div>
                   <p className="text-gray-500">No elements added yet</p>
-                  <p className="text-sm text-gray-400 mt-1">Add text or image elements from the Canvas tab</p>
+                  <p className="text-sm text-gray-400 mt-1">
+                    Add text or image elements from the Canvas tab
+                  </p>
                 </div>
               ) : (
                 <div className="space-y-2">
@@ -770,14 +997,14 @@ export const PropertiesPanel: React.FC<PropertiesPanelProps> = ({
                       onClick={() => onElementSelect?.(element)}
                       className={`p-3 rounded-lg border cursor-pointer transition-colors ${
                         selectedElement?.id === element.id
-                          ? 'border-blue-500 bg-blue-50'
-                          : 'border-gray-200 hover:border-gray-300 hover:bg-gray-50'
+                          ? "border-blue-500 bg-blue-50"
+                          : "border-gray-200 hover:border-gray-300 hover:bg-gray-50"
                       }`}
                     >
                       <div className="flex items-center justify-between">
                         <div className="flex items-center space-x-3">
                           <div className="flex-shrink-0">
-                            {element.data.type === 'text' ? (
+                            {element.data.type === "text" ? (
                               <Type className="w-4 h-4 text-blue-600" />
                             ) : (
                               <Image className="w-4 h-4 text-green-600" />
@@ -788,10 +1015,9 @@ export const PropertiesPanel: React.FC<PropertiesPanelProps> = ({
                               {element.variableName}
                             </p>
                             <p className="text-xs text-gray-500">
-                              {element.data.type === 'text' 
+                              {element.data.type === "text"
                                 ? `"${(element.data as TextElement).content}"`
-                                : `${element.data.width}×${element.data.height}px`
-                              }
+                                : `${element.data.width}×${element.data.height}px`}
                             </p>
                           </div>
                         </div>

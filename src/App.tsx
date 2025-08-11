@@ -58,8 +58,8 @@ function App() {
   const constrainElementsToCanvas = useCallback(
     (newCanvasConfig: CanvasConfig, currentElements: CanvasElement[]) => {
       return currentElements.map((element) => {
-        const elementWidth = element.data.width || 100;
-        const elementHeight = element.data.height || 50;
+        const elementWidth = element.data.width || (element.data.type === 'text' ? 200 : 150);
+        const elementHeight = element.data.height || (element.data.type === 'text' ? 50 : 100);
 
         // Calculate maximum allowed positions
         const maxX = Math.max(0, newCanvasConfig.width - elementWidth);
